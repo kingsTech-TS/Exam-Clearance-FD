@@ -1,6 +1,7 @@
 <div align="center">
 
 # 🎓 EKSU Digital Clearance & Course Form Signing System
+
 ### Frontend Application (Next.js 16 • TypeScript • Tailwind CSS)
 
 An institutional digital portal engineered for **Ekiti State University (EKSU)** to streamline, digitize, and automate student clearance validation and course registration form signing with multi-role cryptographic endorsement.
@@ -27,45 +28,48 @@ The **EKSU Digital Clearance & Course Form Signing System** replaces manual, pap
 ## 🚀 Key Modules & Portals
 
 ### 1. 🎓 Student Portal (`/student`)
-* **Self-Registration Wizard**: Multi-step registration validating 9-digit Matriculation Numbers or 14-character UTME Registration Numbers.
-* **Mandatory Profile Verification**: Guard gate requiring validated passport photographs and digital signatures before submitting forms.
-* **Clearance Submission Engine**: Upload clearance forms with automated checks against the active academic clearance window.
-* **Course Form Routing**: Automated routing of semester course registration forms directly to the student's designated Head of Department (HOD).
-* **Document Inspector**: Interactive in-browser PDF preview with multi-tier progress trackers and audit event timelines.
-* **Instant Retrieval**: Download tamper-evident, digitally signed and stamped PDF documents.
+
+- **Self-Registration Wizard**: Multi-step registration validating 9-digit Matriculation Numbers or 14-character UTME Registration Numbers.
+- **Mandatory Profile Verification**: Guard gate requiring validated passport photographs and digital signatures before submitting forms.
+- **Clearance Submission Engine**: Upload clearance forms with automated checks against the active academic clearance window.
+- **Course Form Routing**: Automated routing of semester course registration forms directly to the student's designated Head of Department (HOD).
+- **Document Inspector**: Interactive in-browser PDF preview with multi-tier progress trackers and audit event timelines.
+- **Instant Retrieval**: Download tamper-evident, digitally signed and stamped PDF documents.
 
 ### 2. ✍️ Staff Reviewer Portal (`/staff`)
-* **Role-Adaptive Dashboards**:
-  * **Faculty Bursar**: Inspect faculty clearance submissions and sign with digital signature, timestamp, and Bursar seal.
-  * **University Auditor**: Perform final review on Bursar-approved forms to append official Auditor endorsement.
-  * **Head of Department (HOD)**: Review and endorse departmental course registration forms.
-* **Review Workspace**: Split-screen PDF viewer with zoom controls, fullscreen mode, one-click digital signing, and structured rejection reason handling.
-* **Credential Management**: Upload official passport photographs, transparent digital signatures, and institutional seals.
+
+- **Role-Adaptive Dashboards**:
+  - **Faculty Bursar**: Inspect faculty clearance submissions and sign with digital signature, timestamp, and Bursar seal.
+  - **University Auditor**: Perform final review on Bursar-approved forms to append official Auditor endorsement.
+  - **Head of Department (HOD)**: Review and endorse departmental course registration forms.
+- **Review Workspace**: Split-screen PDF viewer with zoom controls, fullscreen mode, one-click digital signing, and structured rejection reason handling.
+- **Credential Management**: Upload official passport photographs, transparent digital signatures, and institutional seals.
 
 ### 3. 🛡️ System Administration Portal (`/admin`)
-* **Executive Overview**: High-level institutional metrics, document velocity gauges, and real-time backend service health monitors.
-* **Staff Verification Queue**: Multi-attribute review and approval of staff self-registrations.
-* **Access Control & Escalation**: Promote verified staff members to System Administrators and manage role permissions.
-* **Student & Staff Directories**: Search, filter by faculty/department/level, paginate, and toggle account suspensions.
-* **Master Document Registry**: Institutional repository with multi-filter search and embedded inspection.
-* **Clearance Period Management**: Configure session and semester submission windows to activate or deactivate intake.
-* **Immutable Audit Trails**: Traceable logs capturing all signature placements, approvals, rejections, and administrative actions.
+
+- **Executive Overview**: High-level institutional metrics, document velocity gauges, and real-time backend service health monitors.
+- **Staff Verification Queue**: Multi-attribute review and approval of staff self-registrations.
+- **Access Control & Escalation**: Promote verified staff members to System Administrators and manage role permissions.
+- **Student & Staff Directories**: Search, filter by faculty/department/level, paginate, and toggle account suspensions.
+- **Master Document Registry**: Institutional repository with multi-filter search and embedded inspection.
+- **Clearance Period Management**: Configure session and semester submission windows to activate or deactivate intake.
+- **Immutable Audit Trails**: Traceable logs capturing all signature placements, approvals, rejections, and administrative actions.
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Layer | Technology |
-| :--- | :--- |
-| **Framework** | [Next.js 16 (App Router)](https://nextjs.org/) |
-| **Language** | [TypeScript 5](https://www.typescriptlang.org/) |
-| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) + Custom CSS Design System |
-| **State Management** | [Zustand](https://zustand.docs.pmnd.rs/) with LocalStorage Persistence |
-| **Data Fetching & Cache** | [TanStack React Query v5](https://tanstack.com/query) |
-| **Forms & Validation** | [React Hook Form](https://react-hook-form.com/) + [Zod v4](https://zod.dev/) |
-| **HTTP Client** | [Axios](https://axios-http.com/) with JWT Auto-Refresh Interceptors |
-| **Icons & UI** | [Lucide React](https://lucide.dev/) |
-| **Typography** | Inter (Google Fonts) |
+| Layer                     | Technology                                                                   |
+| :------------------------ | :--------------------------------------------------------------------------- |
+| **Framework**             | [Next.js 16 (App Router)](https://nextjs.org/)                               |
+| **Language**              | [TypeScript 5](https://www.typescriptlang.org/)                              |
+| **Styling**               | [Tailwind CSS v4](https://tailwindcss.com/) + Custom CSS Design System       |
+| **State Management**      | [Zustand](https://zustand.docs.pmnd.rs/) with LocalStorage Persistence       |
+| **Data Fetching & Cache** | [TanStack React Query v5](https://tanstack.com/query)                        |
+| **Forms & Validation**    | [React Hook Form](https://react-hook-form.com/) + [Zod v4](https://zod.dev/) |
+| **HTTP Client**           | [Axios](https://axios-http.com/) with JWT Auto-Refresh Interceptors          |
+| **Icons & UI**            | [Lucide React](https://lucide.dev/)                                          |
+| **Typography**            | Inter (Google Fonts)                                                         |
 
 ---
 
@@ -132,8 +136,8 @@ The **EKSU Digital Clearance & Course Form Signing System** replaces manual, pap
 
 ### Prerequisites
 
-* [Node.js](https://nodejs.org/) (v18.0+) or [Bun](https://bun.sh/) (v1.0+)
-* Running backend instance (FastAPI default: `http://localhost:8000/api/v1`)
+- [Node.js](https://nodejs.org/) (v18.0+) or [Bun](https://bun.sh/) (v1.0+)
+- Running backend instance (FastAPI default: `https://exam-clearance.onrender.com/api/v1`)
 
 ### 1. Environment Setup
 
@@ -181,12 +185,12 @@ npm run start
 
 ## 🎨 Design System & Accessibility
 
-* **Color Palette**: Deep Institutional Navy (`#1e3a8a`), Slate Neutral Surfaces (`#f8fafc`), Clean Whites (`#ffffff`), and Slate Borders (`#e2e8f0`).
-* **Semantic Status Indicators**:
-  * `PENDING_*` $\rightarrow$ Amber (`badge-warning`)
-  * `COMPLETED` / `APPROVED` $\rightarrow$ Emerald (`badge-success`)
-  * `REJECTED` / `SUSPENDED` $\rightarrow$ Rose (`badge-error`)
-* **Responsive Layout**: Fluid breakpoints, mobile slide-out navigation drawers, accessible modals, and touch-optimized data tables.
+- **Color Palette**: Deep Institutional Navy (`#1e3a8a`), Slate Neutral Surfaces (`#f8fafc`), Clean Whites (`#ffffff`), and Slate Borders (`#e2e8f0`).
+- **Semantic Status Indicators**:
+  - `PENDING_*` $\rightarrow$ Amber (`badge-warning`)
+  - `COMPLETED` / `APPROVED` $\rightarrow$ Emerald (`badge-success`)
+  - `REJECTED` / `SUSPENDED` $\rightarrow$ Rose (`badge-error`)
+- **Responsive Layout**: Fluid breakpoints, mobile slide-out navigation drawers, accessible modals, and touch-optimized data tables.
 
 ---
 
