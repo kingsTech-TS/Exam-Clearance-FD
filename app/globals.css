@@ -2,12 +2,12 @@
 @import "tailwindcss";
 
 :root {
-  /* Institutional Primary — Deep Navy */
-  --primary: #1e3a8a;
-  --primary-hover: #1e40af;
+  /* Institutional Primary — Burnt Orange */
+  --primary: #A5452C;
+  --primary-hover: #8f3f28;
   --primary-foreground: #ffffff;
-  --primary-light: #eff6ff;
-  --primary-muted: #dbeafe;
+  --primary-light: #f8e7e2;
+  --primary-muted: #f1cfc5;
 
   /* Backgrounds & Surfaces */
   --background: #f8fafc;
@@ -53,14 +53,14 @@
   --sidebar-bg: #0f172a;
   --sidebar-text: #cbd5e1;
   --sidebar-text-active: #ffffff;
-  --sidebar-active-bg: #1e3a8a;
+  --sidebar-active-bg: #A5452C;
   --sidebar-hover-bg: #1e293b;
   --sidebar-border: #1e293b;
 
   /* Input */
   --input-bg: #ffffff;
   --input-border: #cbd5e1;
-  --input-focus-border: #1e3a8a;
+  --input-focus-border: #A5452C;
   --input-placeholder: #94a3b8;
 
   /* Shadows */
