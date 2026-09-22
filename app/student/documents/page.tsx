@@ -12,7 +12,7 @@ import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { DocumentUploadModal } from "@/components/documents/DocumentUploadModal";
 import type { DocumentResponse, DocumentType } from "@/types/document";
 
-type FilterTab = "ALL" | "CLEARANCE" | "COURSE" | "PENDING" | "COMPLETED" | "REJECTED";
+type FilterTab = "ALL" | "CLEARANCE" | "PENDING" | "COMPLETED" | "REJECTED";
 
 export default function StudentDocumentsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterTab>("ALL");
@@ -46,7 +46,6 @@ export default function StudentDocumentsPage() {
 
   const filteredDocs = (docs || []).filter((d) => {
     if (activeFilter === "CLEARANCE") return d.doc_type === "CLEARANCE_FORM";
-    if (activeFilter === "COURSE") return d.doc_type === "COURSE_FORM";
     if (activeFilter === "PENDING") return d.status.startsWith("PENDING");
     if (activeFilter === "COMPLETED") return d.status === "COMPLETED";
     if (activeFilter === "REJECTED") return d.status === "REJECTED";
@@ -80,7 +79,6 @@ export default function StudentDocumentsPage() {
           {[
             { key: "ALL", label: "All Documents" },
             { key: "CLEARANCE", label: "Clearance Forms" },
-            { key: "COURSE", label: "Course Forms" },
             { key: "PENDING", label: "In Review" },
             { key: "COMPLETED", label: "Completed" },
             { key: "REJECTED", label: "Rejected" },

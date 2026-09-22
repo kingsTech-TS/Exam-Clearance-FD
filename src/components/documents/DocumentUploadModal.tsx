@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Upload, X, AlertCircle, CheckCircle2, FileText, Info } from "lucide-react";
+import { Upload, X, AlertCircle, Info } from "lucide-react";
 import { studentsApi } from "@/lib/api/students";
-import type { DocumentType } from "@/types/document";
 
 interface DocumentUploadModalProps {
   isOpen: boolean;
@@ -18,7 +17,7 @@ export function DocumentUploadModal({
   onSuccess,
   isClearancePeriodActive = true,
 }: DocumentUploadModalProps) {
-  const [docType, setDocType] = useState<DocumentType>("CLEARANCE_FORM");
+
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +45,7 @@ export function DocumentUploadModal({
       setError("Please select a PDF file to upload.");
       return;
     }
-    if (docType === "CLEARANCE_FORM" && !isClearancePeriodActive) {
+    if (!isClearancePeriodActive) {
       setError("Clearance submission is currently closed by the university administration.");
       return;
     }
@@ -70,9 +69,9 @@ export function DocumentUploadModal({
       <div className="dialog-box" style={{ maxWidth: "520px" }} onClick={(e) => e.stopPropagation()}>
         <div className="dialog-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <h3 style={{ fontSize: "1rem", fontWeight: 600 }}>Submit Document for Signing</h3>
+            <h3 style={{ fontSize: "1rem", fontWeight: 600 }}>Upload Clearance Form</h3>
             <p style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)", marginTop: "0.125rem" }}>
-              Upload your official form for administrative approval
+              Submit your official university clearance form for administrative approval
             </p>
           </div>
           <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
@@ -81,65 +80,21 @@ export function DocumentUploadModal({
         </div>
 
         <div className="dialog-body">
-          {/* Document Type Selection */}
-          <div className="form-group">
-            <label className="form-label">Select Document Type</label>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-              <button
-                type="button"
-                onClick={() => setDocType("CLEARANCE_FORM")}
-                style={{
-                  padding: "0.75rem",
-                  borderRadius: "6px",
-                  border: docType === "CLEARANCE_FORM" ? "2px solid var(--primary)" : "1px solid var(--border)",
-                  background: docType === "CLEARANCE_FORM" ? "var(--primary-light)" : "var(--surface)",
-                  color: docType === "CLEARANCE_FORM" ? "var(--primary)" : "var(--foreground)",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
-              >
-                <div style={{ fontWeight: 600, fontSize: "0.8125rem" }}>Clearance Form</div>
-                <div style={{ fontSize: "0.6875rem", color: "var(--foreground-muted)", marginTop: "0.125rem" }}>
-                  Bursar &rarr; Auditor approval
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setDocType("COURSE_FORM")}
-                style={{
-                  padding: "0.75rem",
-                  borderRadius: "6px",
-                  border: docType === "COURSE_FORM" ? "2px solid var(--primary)" : "1px solid var(--border)",
-                  background: docType === "COURSE_FORM" ? "var(--primary-light)" : "var(--surface)",
-                  color: docType === "COURSE_FORM" ? "var(--primary)" : "var(--foreground)",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
-              >
-                <div style={{ fontWeight: 600, fontSize: "0.8125rem" }}>Course Form</div>
-                <div style={{ fontSize: "0.6875rem", color: "var(--foreground-muted)", marginTop: "0.125rem" }}>
-                  HOD direct signing
-                </div>
-              </button>
-            </div>
-          </div>
-
           {/* Pre-upload Checklist Notice */}
           <div className="alert alert-info" style={{ marginBottom: "1rem", fontSize: "0.8125rem", padding: "0.75rem" }}>
             <Info size={16} style={{ flexShrink: 0 }} />
             <div>
               <span style={{ fontWeight: 600, display: "block", marginBottom: "0.25rem" }}>Pre-submission Checklist:</span>
               <ul style={{ margin: 0, paddingLeft: "1.25rem", lineHeight: 1.4 }}>
-                <li>Ensure this is your official, current semester form.</li>
-                <li>Verify your Matric/Reg number and details are accurate.</li>
+                <li>Ensure this is your official, current session clearance form.</li>
+                <li>Verify your Matric/Reg number and student details are accurate.</li>
                 <li>The PDF must be clear, complete, and unencrypted.</li>
               </ul>
             </div>
           </div>
 
           {/* Clearance Period check notice */}
-          {docType === "CLEARANCE_FORM" && !isClearancePeriodActive && (
+          {!isClearancePeriodActive && (
             <div className="alert alert-warning" style={{ marginBottom: "1rem", fontSize: "0.8125rem" }}>
               <AlertCircle size={15} style={{ flexShrink: 0 }} />
               <span>Clearance submission is currently closed. Contact admin for assistance.</span>
@@ -202,7 +157,7 @@ export function DocumentUploadModal({
             type="button"
             className="btn btn-primary"
             onClick={handleUpload}
-            disabled={isUploading || !file || (docType === "CLEARANCE_FORM" && !isClearancePeriodActive)}
+            disabled={isUploading || !file || !isClearancePeriodActive}
           >
             {isUploading ? "Uploading & Processing..." : "Submit for Signing"}
           </button>

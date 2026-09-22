@@ -1,0 +1,10 @@
+{
+    "chat.mcp.serverSampling": {
+        "exam-clearance/.vscode/mcp.json: Perplexity": {
+            "allowedModels": [
+                "copilot/auto",
+                "copilotcli/auto"
+            ]
+        }
+    }
+}
