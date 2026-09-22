@@ -50,12 +50,12 @@
   --destructive-foreground: #ffffff;
 
   /* Sidebar */
-  --sidebar-bg: #0f172a;
-  --sidebar-text: #cbd5e1;
+  --sidebar-bg: #A5452C;
+  --sidebar-text: #fbeae4;
   --sidebar-text-active: #ffffff;
-  --sidebar-active-bg: #A5452C;
-  --sidebar-hover-bg: #1e293b;
-  --sidebar-border: #1e293b;
+  --sidebar-active-bg: #8f3f28;
+  --sidebar-hover-bg: #8f3f28;
+  --sidebar-border: #c86646;
 
   /* Input */
   --input-bg: #ffffff;

@@ -133,7 +133,7 @@ export function Sidebar({ onClose }: SidebarProps) {
             <div style={{ fontWeight: 700, fontSize: "0.875rem", color: "white", lineHeight: 1.2 }}>
               EKSU Clearance
             </div>
-            <div style={{ fontSize: "0.6875rem", color: "#64748b", marginTop: "1px" }}>{roleLabel}</div>
+            <div style={{ fontSize: "0.6875rem", color: "#ffffff", marginTop: "1px" }}>{roleLabel}</div>
           </div>
         </div>
 
