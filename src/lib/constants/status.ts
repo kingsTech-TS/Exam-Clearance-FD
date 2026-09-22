@@ -40,3 +40,24 @@ export const APPROVAL_STATUS_BADGE = {
   REJECTED: "badge-error",
   SUSPENDED: "badge-error",
 } as const;
+
+export const COURSE_REGISTRATION_STATUS_LABELS: Record<string, string> = {
+  DRAFT: "Draft",
+  PENDING_HOD: "Awaiting HOD Approval",
+  APPROVED: "Approved",
+  REJECTED: "Needs Revision",
+  COMPLETED: "Approved & Signed",
+  // Legacy fallback in case old data uses SUBMITTED
+  SUBMITTED: "Awaiting HOD Approval",
+};
+
+export const COURSE_REGISTRATION_STATUS_BADGE: Record<string, string> = {
+  DRAFT: "badge-info",
+  PENDING_HOD: "badge-pending",
+  APPROVED: "badge-success",
+  REJECTED: "badge-error",
+  COMPLETED: "badge-success",
+  // Legacy fallback
+  SUBMITTED: "badge-pending",
+};
+

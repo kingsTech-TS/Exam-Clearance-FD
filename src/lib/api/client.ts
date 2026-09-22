@@ -1,11 +1,10 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://exam-clearance.onrender.com/api/v1";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
 const client = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
-  timeout: 30000,
+  timeout: 60000,
 });
 
 // Token storage helpers

@@ -128,7 +128,7 @@ export default function StaffProfilePage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: isHOD ? "1fr 1fr" : "repeat(auto-fit, minmax(240px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
           gap: "1.25rem",
         }}
       >

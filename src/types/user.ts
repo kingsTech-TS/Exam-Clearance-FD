@@ -70,6 +70,8 @@ export interface StudentDashboardResponse {
   profile_completed?: boolean;
   clearance_status?: string | null;
   course_form_status?: string | null;
+  course_form_document_id?: string | null;
+  course_rejection_reason?: string | null;
   total_documents?: number;
   pending_documents?: number;
   completed_documents?: number;

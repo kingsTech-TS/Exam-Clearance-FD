@@ -2,6 +2,13 @@ import client from "./client";
 import type { DataResponse } from "@/types/api";
 import type { StaffProfileResponse, StaffDashboardResponse } from "@/types/user";
 import type { DocumentResponse } from "@/types/document";
+import type {
+  Course,
+  CourseCreateRequest,
+  CourseUpdateRequest,
+  CourseBulkResponse,
+  CourseRegistration,
+} from "@/types/course";
 
 export const staffApi = {
   getMe: () =>
@@ -51,4 +58,45 @@ export const staffApi = {
 
   rejectDocument: (id: string, reason: string) =>
     client.post<DataResponse<Record<string, unknown>>>(`/staff/documents/${id}/reject`, { reason }),
+
+  // ── HOD Course Management ───────────────────────────────────────────────────
+  getCourses: (params?: { status?: string; level?: string; session?: string; semester?: string }) =>
+    client.get<DataResponse<Course[]>>("/staff/courses", { params }),
+
+  getCourse: (course_id: string) =>
+    client.get<DataResponse<Course>>(`/staff/courses/${course_id}`),
+
+  createCourse: (data: CourseCreateRequest) =>
+    client.post<DataResponse<Course>>("/staff/courses", data),
+
+  updateCourse: (course_id: string, data: CourseUpdateRequest) =>
+    client.patch<DataResponse<Course>>(`/staff/courses/${course_id}`, data),
+
+  deactivateCourse: (course_id: string) =>
+    client.patch<DataResponse<Course>>(`/staff/courses/${course_id}/deactivate`),
+
+  bulkUploadCourses: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return client.post<DataResponse<CourseBulkResponse>>("/staff/courses/bulk-upload", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  // ── HOD Course Registrations ────────────────────────────────────────────────
+  getCourseRegistrations: (params?: { status?: string; session?: string; semester?: string; level?: string }) =>
+    client.get<DataResponse<CourseRegistration[]>>("/staff/course-registrations", { params }),
+
+  getCourseRegistration: (registration_id: string) =>
+    client.get<DataResponse<CourseRegistration>>(`/staff/course-registrations/${registration_id}`),
+
+  approveCourseRegistration: (registration_id: string, signing_date?: string) =>
+    client.post<DataResponse<CourseRegistration>>(`/staff/course-registrations/${registration_id}/approve`, {
+      signing_date,
+    }),
+
+  rejectCourseRegistration: (registration_id: string, reason: string) =>
+    client.post<DataResponse<CourseRegistration>>(`/staff/course-registrations/${registration_id}/reject`, {
+      reason,
+    }),
 };

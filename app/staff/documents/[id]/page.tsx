@@ -77,23 +77,23 @@ export default function StaffDocumentReviewPage() {
     <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       {/* Top Bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
           <button
             type="button"
             className="btn btn-ghost btn-sm"
             onClick={() => router.push("/staff/documents")}
-            style={{ padding: "0.375rem" }}
+            style={{ padding: "0.375rem", flexShrink: 0 }}
           >
             <ArrowLeft size={18} />
           </button>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
               <h1 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0 }}>
                 {isClearance ? "Clearance Form Review" : "Course Form Review"}
               </h1>
               <StatusBadge status={docData.status} />
             </div>
-            <span style={{ fontSize: "0.75rem", color: "var(--foreground-muted)" }}>
+            <span style={{ fontSize: "0.75rem", color: "var(--foreground-muted)", wordBreak: "break-word" }}>
               Student: {docData.student_name} ({docData.matric_number || docData.registration_number || "—"})
             </span>
           </div>
@@ -101,7 +101,7 @@ export default function StaffDocumentReviewPage() {
 
         {/* Action Buttons */}
         {canSign && (
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", width: "auto" }} className="review-header-actions">
             <button
               type="button"
               className="btn btn-danger"

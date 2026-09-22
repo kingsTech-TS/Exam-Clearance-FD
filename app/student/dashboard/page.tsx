@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Shield,
   UserCheck,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/auth/authStore";
@@ -50,7 +51,9 @@ export default function StudentDashboardPage() {
   }
 
   const clearanceForm = dashboardData?.clearance_form || docsData?.find((d) => d.doc_type === "CLEARANCE_FORM");
-  const courseForm = dashboardData?.course_form || docsData?.find((d) => d.doc_type === "COURSE_FORM");
+  // course_form_status now comes from course_registrations (DRAFT/PENDING_HOD/COMPLETED/REJECTED)
+  const courseFormStatus: string | null = dashboardData?.course_form_status ?? null;
+  const courseFormDocId: string | null = dashboardData?.course_form_document_id ?? null;
   
   const isProfileComplete = Boolean(
     dashboardData?.profile_complete ||
@@ -87,6 +90,26 @@ export default function StudentDashboardPage() {
       }
     } catch {
       alert("Unable to generate download link. Please try again.");
+    }
+  };
+
+  const handleCourseFormDownload = async () => {
+    try {
+      const res = await studentsApi.downloadCourseForm();
+      const url = res.data.data?.download_url;
+      if (url) {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "course-form-signed.pdf";
+        link.target = "_blank";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        alert("Download link unavailable. The form may not be ready yet.");
+      }
+    } catch {
+      alert("Unable to generate course form download link. Please try again.");
     }
   };
 
@@ -280,11 +303,11 @@ export default function StudentDashboardPage() {
                 <span style={{ fontSize: "0.75rem", color: "var(--foreground-muted)" }}>Departmental Signing (HOD Approval)</span>
               </div>
             </div>
-            {courseForm && <StatusBadge status={courseForm.status} />}
+            {courseFormStatus && <StatusBadge status={courseFormStatus} type="registration" />}
           </div>
 
           <div className="card-body" style={{ flex: 1, display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {courseForm ? (
+            {courseFormStatus ? (
               <>
                 <div style={{ background: "var(--surface-sunken)", padding: "0.875rem", borderRadius: "6px" }}>
                   <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--foreground-muted)", marginBottom: "0.625rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
@@ -292,26 +315,31 @@ export default function StudentDashboardPage() {
                   </div>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8125rem" }}>
                     <span style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
-                      {courseForm.status === "COMPLETED" ? (
+                      {courseFormStatus === "COMPLETED" ? (
                         <CheckCircle2 size={14} color="var(--status-success-text)" />
                       ) : (
                         <Clock size={14} color="var(--foreground-muted)" />
                       )}
                       Head of Department ({user?.department || dashboardData?.profile?.department || "HOD"})
                     </span>
-                    <StatusBadge status={courseForm.status} />
+                    <StatusBadge status={courseFormStatus} type="registration" />
                   </div>
+                  {courseFormStatus === "REJECTED" && dashboardData?.course_rejection_reason && (
+                    <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "0.5rem", fontStyle: "italic" }}>
+                      &ldquo;{dashboardData.course_rejection_reason}&rdquo;
+                    </p>
+                  )}
                 </div>
 
                 <div style={{ display: "flex", gap: "0.5rem", marginTop: "auto" }}>
-                  <Link href={`/student/documents/${courseForm.id}`} className="btn btn-outline btn-sm" style={{ flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.375rem", textDecoration: "none" }}>
-                    <Eye size={14} /> View Details
+                  <Link href="/student/courses" className="btn btn-outline btn-sm" style={{ flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.375rem", textDecoration: "none" }}>
+                    <Eye size={14} /> {courseFormStatus === "COMPLETED" ? "View Registration" : "Manage Registration"}
                   </Link>
-                  {courseForm.status === "COMPLETED" && (
+                  {courseFormStatus === "COMPLETED" && (
                     <button
                       type="button"
                       className="btn btn-primary btn-sm"
-                      onClick={() => handleDownload(courseForm.id, "course-form-signed.pdf")}
+                      onClick={handleCourseFormDownload}
                       style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
                     >
                       <Download size={14} /> Download Signed
@@ -323,20 +351,18 @@ export default function StudentDashboardPage() {
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem 1rem", textAlign: "center", gap: "0.75rem" }}>
                 <FileText size={32} color="var(--foreground-muted)" style={{ opacity: 0.5 }} />
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>No Course Form Submitted</div>
+                  <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>No Course Registration Yet</div>
                   <div style={{ fontSize: "0.75rem", color: "var(--foreground-muted)", marginTop: "0.125rem" }}>
-                    Upload your registered course form to obtain your HOD's digital signature.
+                    Select and register your semester courses online for HOD endorsement.
                   </div>
                 </div>
-                <button
-                  type="button"
+                <Link
+                  href="/student/courses"
                   className="btn btn-primary btn-sm"
-                  onClick={() => setIsUploadOpen(true)}
-                  disabled={!isProfileComplete}
-                  style={{ marginTop: "0.25rem" }}
+                  style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.375rem", marginTop: "0.25rem" }}
                 >
-                  Upload Course Form
-                </button>
+                  <BookOpen size={14} /> Register Courses
+                </Link>
               </div>
             )}
           </div>

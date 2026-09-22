@@ -57,23 +57,11 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
   return (
     <AppShell breadcrumb={`Staff Portal — ${user?.sub_role || "Reviewer"}`}>
       {isProfileIncomplete && (
-        <div
-          style={{
-            background: "var(--status-pending-bg)",
-            borderBottom: "1px solid var(--status-pending-border)",
-            padding: "0.75rem 1.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "1rem",
-            color: "var(--status-pending-text)",
-            fontSize: "0.8125rem",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <div className="portal-banner">
+          <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
             <AlertCircle size={16} style={{ flexShrink: 0 }} />
             <span>
-              <strong>Setup Required:</strong> Please complete your signing credentials (signature{user?.sub_role !== "HOD" ? " & seal" : ""}) to sign documents.
+              <strong>Setup Required:</strong> Please complete your signing credentials (signature{user?.sub_role !== "HOD" ? " & seal" : ""}) to stamp and sign documents.
             </span>
           </div>
           <Link
@@ -85,7 +73,7 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
           </Link>
         </div>
       )}
-      <div style={{ padding: "1.5rem" }}>{children}</div>
+      <div className="portal-content">{children}</div>
     </AppShell>
   );
 }

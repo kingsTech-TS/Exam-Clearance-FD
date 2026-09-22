@@ -14,6 +14,7 @@ import {
   Activity,
   LogOut,
   GraduationCap,
+  BookOpen,
 } from "lucide-react";
 import { useAuthStore } from "@/lib/auth/authStore";
 import type { UserRole, StaffSubRole } from "@/types/user";
@@ -28,18 +29,31 @@ function getNavItems(role: UserRole, subRole?: StaffSubRole): NavItem[] {
   if (role === "STUDENT") {
     return [
       { label: "Dashboard", href: "/student/dashboard", icon: LayoutDashboard },
+      { label: "Course Registration", href: "/student/courses", icon: BookOpen },
       { label: "My Documents", href: "/student/documents", icon: FileText },
       { label: "Profile", href: "/student/profile", icon: User },
       { label: "Settings", href: "/student/settings", icon: Settings },
     ];
   }
   if (role === "STAFF") {
-    return [
+    const items: NavItem[] = [
       { label: "Dashboard", href: "/staff/dashboard", icon: LayoutDashboard },
-      { label: "Documents", href: "/staff/documents", icon: FileText },
-      { label: "Profile", href: "/staff/profile", icon: User },
-      { label: "Settings", href: "/staff/settings", icon: Settings },
+      { label: "Clearance Review", href: "/staff/documents", icon: FileText },
     ];
+
+    if (subRole === "HOD") {
+      items.push(
+        { label: "Course Management", href: "/staff/courses", icon: BookOpen },
+        { label: "Course Registrations", href: "/staff/course-registrations", icon: GraduationCap }
+      );
+    }
+
+    items.push(
+      { label: "Profile", href: "/staff/profile", icon: User },
+      { label: "Settings", href: "/staff/settings", icon: Settings }
+    );
+
+    return items;
   }
   // Admin
   return [

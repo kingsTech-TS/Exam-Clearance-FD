@@ -2,6 +2,13 @@ import client from "./client";
 import type { DataResponse } from "@/types/api";
 import type { StudentProfileResponse, StudentDashboardResponse } from "@/types/user";
 import type { DocumentResponse } from "@/types/document";
+import type {
+  Course,
+  CourseRegistration,
+  CourseRegistrationCreateRequest,
+  CourseRegistrationUpdateRequest,
+  CourseRegistrationSubmitRequest,
+} from "@/types/course";
 
 export const studentsApi = {
   getMe: () =>
@@ -39,4 +46,26 @@ export const studentsApi = {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
+
+  // Course Registration
+  getEligibleCourses: (params?: { session?: string; semester?: string }) =>
+    client.get<DataResponse<Course[]>>("/students/me/courses", { params }),
+
+  getCourseRegistration: (params?: { session?: string; semester?: string }) =>
+    client.get<DataResponse<CourseRegistration | null>>("/students/me/course-registration", { params }),
+
+  createCourseRegistration: (data: CourseRegistrationCreateRequest) =>
+    client.post<DataResponse<CourseRegistration>>("/students/me/course-registration", data),
+
+  updateCourseRegistration: (data: CourseRegistrationUpdateRequest) =>
+    client.patch<DataResponse<CourseRegistration>>("/students/me/course-registration", data),
+
+  submitCourseRegistration: (data?: CourseRegistrationSubmitRequest) =>
+    client.post<DataResponse<CourseRegistration>>("/students/me/course-registration/submit", data ?? {}),
+
+  downloadCourseForm: (params?: { session?: string; semester?: string }) =>
+    client.get<DataResponse<{ download_url: string; expires_in_seconds?: number }>>(
+      "/students/me/course-registration/download",
+      { params }
+    ),
 };
