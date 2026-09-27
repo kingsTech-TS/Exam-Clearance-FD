@@ -67,7 +67,7 @@ export default function StudentDocumentDetailPage() {
       if (res.data.data.download_url) {
         const link = document.createElement("a");
         link.href = res.data.data.download_url;
-        link.download = `${docData.doc_type}_Signed.pdf`;
+        link.download = `${docData.document_type}_Signed.pdf`;
         link.target = "_blank";
         document.body.appendChild(link);
         link.click();
@@ -78,7 +78,7 @@ export default function StudentDocumentDetailPage() {
     }
   };
 
-  const isClearance = docData.doc_type === "CLEARANCE_FORM";
+  const isClearance = docData.document_type === "CLEARANCE";
   const isCompleted = docData.status === "COMPLETED";
   const isRejected = docData.status === "REJECTED";
 

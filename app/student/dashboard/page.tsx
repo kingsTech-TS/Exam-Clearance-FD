@@ -50,7 +50,7 @@ export default function StudentDashboardPage() {
     return <PageSkeleton />;
   }
 
-  const clearanceForm = dashboardData?.clearance_form || docsData?.find((d) => d.doc_type === "CLEARANCE_FORM");
+  const clearanceForm = dashboardData?.clearance_form || docsData?.find((d) => d.document_type === "CLEARANCE");
   // course_form_status now comes from course_registrations (DRAFT/PENDING_HOD/COMPLETED/REJECTED)
   const courseFormStatus: string | null = dashboardData?.course_form_status ?? null;
   const courseFormDocId: string | null = dashboardData?.course_form_document_id ?? null;

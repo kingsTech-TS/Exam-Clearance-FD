@@ -64,7 +64,7 @@ export default function StaffDocumentReviewPage() {
     );
   }
 
-  const isClearance = docData.doc_type === "CLEARANCE_FORM";
+  const isClearance = docData.document_type === "CLEARANCE";
   const subRole = user?.sub_role || "BURSAR";
 
   // Check if current staff can sign this document
@@ -94,7 +94,7 @@ export default function StaffDocumentReviewPage() {
               <StatusBadge status={docData.status} />
             </div>
             <span style={{ fontSize: "0.75rem", color: "var(--foreground-muted)", wordBreak: "break-word" }}>
-              Student: {docData.student_name} ({docData.matric_number || docData.registration_number || "—"})
+              Student: {docData.student_name} ({docData.student_matric_or_reg || "—"})
             </span>
           </div>
         </div>
@@ -144,7 +144,7 @@ export default function StaffDocumentReviewPage() {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span style={{ color: "var(--foreground-muted)" }}>Matric / Reg No:</span>
-                <span style={{ fontWeight: 600 }}>{docData.matric_number || docData.registration_number || "—"}</span>
+                <span style={{ fontWeight: 600 }}>{docData.student_matric_or_reg || "—"}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span style={{ color: "var(--foreground-muted)" }}>Faculty:</span>

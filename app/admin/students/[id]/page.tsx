@@ -160,13 +160,13 @@ export default function AdminStudentDetailPage() {
                     <tr key={doc.id}>
                       <td data-label="Document Type">
                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                          {doc.doc_type === "CLEARANCE_FORM" ? (
+                          {doc.document_type === "CLEARANCE" ? (
                             <Shield size={16} color="var(--primary)" />
                           ) : (
                             <FileText size={16} color="var(--primary)" />
                           )}
                           <span style={{ fontWeight: 600 }}>
-                            {doc.doc_type === "CLEARANCE_FORM" ? "Clearance Form" : "Course Form"}
+                            {doc.document_type === "CLEARANCE" ? "Clearance Form" : "Course Form"}
                           </span>
                         </div>
                       </td>
@@ -184,7 +184,7 @@ export default function AdminStudentDetailPage() {
                           <button
                             type="button"
                             className="btn btn-secondary btn-sm"
-                            onClick={() => handleDownload(doc.id, `${doc.doc_type}.pdf`)}
+                            onClick={() => handleDownload(doc.id, `${doc.document_type}.pdf`)}
                           >
                             <Download size={13} /> PDF
                           </button>

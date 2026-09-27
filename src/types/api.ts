@@ -17,6 +17,20 @@ export interface PaginatedResponse<T> {
   };
 }
 
+// Bulk sign / approve result — failed items are skipped, the rest still succeed
+export interface BulkActionFailure {
+  id: string;
+  error: string;
+}
+
+export interface BulkActionResponse {
+  total: number;
+  success_count: number;
+  failed_count: number;
+  succeeded: string[];
+  failed: BulkActionFailure[];
+}
+
 export interface TokenResponse {
   access_token: string;
   refresh_token: string;

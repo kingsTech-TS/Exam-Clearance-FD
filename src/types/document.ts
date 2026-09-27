@@ -1,4 +1,4 @@
-export type DocumentType = "CLEARANCE_FORM" | "COURSE_FORM";
+export type DocumentType = "CLEARANCE" | "COURSE_FORM";
 
 export type DocumentStatus =
   | "PENDING_BURSAR"
@@ -20,12 +20,11 @@ export interface DocumentResponse {
   id: string;
   student_id: string;
   student_name: string;
-  matric_number?: string;
-  registration_number?: string;
+  student_matric_or_reg?: string; // matric number, or registration number if the student has none
   faculty: string;
   department: string;
   level: string;
-  doc_type: DocumentType;
+  document_type: DocumentType;
   status: DocumentStatus;
   file_url?: string;
   current_reviewer?: string;

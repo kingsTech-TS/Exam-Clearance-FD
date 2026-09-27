@@ -9,7 +9,7 @@ interface DocumentWorkflowTrackerProps {
 }
 
 export function DocumentWorkflowTracker({ document }: DocumentWorkflowTrackerProps) {
-  const isClearance = document.doc_type === "CLEARANCE_FORM";
+  const isClearance = document.document_type === "CLEARANCE";
   const isRejected = document.status === "REJECTED";
   const isCompleted = document.status === "COMPLETED";
 

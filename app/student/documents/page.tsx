@@ -45,7 +45,7 @@ export default function StudentDocumentsPage() {
   };
 
   const filteredDocs = (docs || []).filter((d) => {
-    if (activeFilter === "CLEARANCE") return d.doc_type === "CLEARANCE_FORM";
+    if (activeFilter === "CLEARANCE") return d.document_type === "CLEARANCE";
     if (activeFilter === "PENDING") return d.status.startsWith("PENDING");
     if (activeFilter === "COMPLETED") return d.status === "COMPLETED";
     if (activeFilter === "REJECTED") return d.status === "REJECTED";
@@ -128,13 +128,13 @@ export default function StudentDocumentsPage() {
                   <tr key={doc.id}>
                     <td data-label="Document Type">
                       <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                        {doc.doc_type === "CLEARANCE_FORM" ? (
+                        {doc.document_type === "CLEARANCE" ? (
                           <Shield size={16} color="var(--primary)" />
                         ) : (
                           <FileText size={16} color="var(--primary)" />
                         )}
                         <span style={{ fontWeight: 600, fontSize: "0.875rem" }}>
-                          {doc.doc_type === "CLEARANCE_FORM" ? "Clearance Form" : "Course Form"}
+                          {doc.document_type === "CLEARANCE" ? "Clearance Form" : "Course Form"}
                         </span>
                       </div>
                     </td>
@@ -160,7 +160,7 @@ export default function StudentDocumentsPage() {
                           <button
                             type="button"
                             className="btn btn-primary btn-sm"
-                            onClick={() => handleDownload(doc.id, `${doc.doc_type}_Signed.pdf`)}
+                            onClick={() => handleDownload(doc.id, `${doc.document_type}_Signed.pdf`)}
                           >
                             <Download size={13} /> PDF
                           </button>

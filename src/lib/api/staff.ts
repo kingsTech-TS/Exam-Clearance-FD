@@ -1,5 +1,5 @@
 import client from "./client";
-import type { DataResponse } from "@/types/api";
+import type { DataResponse, BulkActionResponse } from "@/types/api";
 import type { StaffProfileResponse, StaffDashboardResponse } from "@/types/user";
 import type { DocumentResponse } from "@/types/document";
 import type {
@@ -9,6 +9,10 @@ import type {
   CourseBulkResponse,
   CourseRegistration,
 } from "@/types/course";
+
+// Bulk actions sign PDFs server-side (up to 200 per request), so allow more than the default 60s
+const BULK_TIMEOUT_MS = 5 * 60 * 1000;
+export const BULK_MAX_ITEMS = 200;
 
 export const staffApi = {
   getMe: () =>
@@ -59,6 +63,14 @@ export const staffApi = {
   rejectDocument: (id: string, reason: string) =>
     client.post<DataResponse<Record<string, unknown>>>(`/staff/documents/${id}/reject`, { reason }),
 
+  // Omit document_ids to sign every document pending the caller's review (Bursar/Auditor only)
+  bulkSignDocuments: (document_ids?: string[], signing_date?: string) =>
+    client.post<DataResponse<BulkActionResponse>>(
+      "/staff/documents/bulk-sign",
+      { document_ids, signing_date },
+      { timeout: BULK_TIMEOUT_MS }
+    ),
+
   // ── HOD Course Management ───────────────────────────────────────────────────
   getCourses: (params?: { status?: string; level?: string; session?: string; semester?: string }) =>
     client.get<DataResponse<Course[]>>("/staff/courses", { params }),
@@ -94,6 +106,14 @@ export const staffApi = {
     client.post<DataResponse<CourseRegistration>>(`/staff/course-registrations/${registration_id}/approve`, {
       signing_date,
     }),
+
+  // Omit registration_ids to approve every registration pending the HOD's review
+  bulkApproveCourseRegistrations: (registration_ids?: string[], signing_date?: string) =>
+    client.post<DataResponse<BulkActionResponse>>(
+      "/staff/course-registrations/bulk-approve",
+      { registration_ids, signing_date },
+      { timeout: BULK_TIMEOUT_MS }
+    ),
 
   rejectCourseRegistration: (registration_id: string, reason: string) =>
     client.post<DataResponse<CourseRegistration>>(`/staff/course-registrations/${registration_id}/reject`, {

@@ -50,8 +50,7 @@ export default function AdminDocumentsPage() {
     if (!term) return true;
     return (
       doc.student_name.toLowerCase().includes(term) ||
-      (doc.matric_number && doc.matric_number.toLowerCase().includes(term)) ||
-      (doc.registration_number && doc.registration_number.toLowerCase().includes(term)) ||
+      doc.student_matric_or_reg?.toLowerCase().includes(term) ||
       doc.department.toLowerCase().includes(term)
     );
   });
@@ -94,7 +93,7 @@ export default function AdminDocumentsPage() {
 
           <select className="form-select" value={docType} onChange={(e) => setDocType(e.target.value)} style={{ height: "36px" }}>
             <option value="">All Document Types</option>
-            <option value="CLEARANCE_FORM">Clearance Form</option>
+            <option value="CLEARANCE">Clearance Form</option>
             <option value="COURSE_FORM">Course Form</option>
           </select>
 
@@ -165,14 +164,14 @@ export default function AdminDocumentsPage() {
                       {doc.student_name}
                     </td>
                     <td data-label="Matric / Reg No" style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)" }}>
-                      {doc.matric_number || doc.registration_number || "—"}
+                      {doc.student_matric_or_reg || "—"}
                     </td>
                     <td data-label="Faculty & Department" style={{ fontSize: "0.8125rem" }}>
                       {doc.faculty} &bull; {doc.department}
                     </td>
                     <td data-label="Form Type">
                       <span style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
-                        {doc.doc_type === "CLEARANCE_FORM" ? "Clearance Form" : "Course Form"}
+                        {doc.document_type === "CLEARANCE" ? "Clearance Form" : "Course Form"}
                       </span>
                     </td>
                     <td data-label="Status">
@@ -197,7 +196,7 @@ export default function AdminDocumentsPage() {
                           <button
                             type="button"
                             className="btn btn-primary btn-sm"
-                            onClick={() => handleDownload(doc.id, `${doc.doc_type}.pdf`)}
+                            onClick={() => handleDownload(doc.id, `${doc.document_type}.pdf`)}
                           >
                             <Download size={13} /> PDF
                           </button>
@@ -223,9 +222,9 @@ export default function AdminDocumentsPage() {
             <div style={{ flex: 1, overflow: "hidden" }}>
               <PdfViewer
                 url={previewUrl || previewDoc.file_url}
-                title={`${previewDoc.student_name} — ${previewDoc.doc_type === "CLEARANCE_FORM" ? "Clearance" : "Course"} Form`}
+                title={`${previewDoc.student_name} — ${previewDoc.document_type === "CLEARANCE" ? "Clearance" : "Course"} Form`}
                 canDownload={previewDoc.status === "COMPLETED"}
-                onDownload={() => handleDownload(previewDoc.id, `${previewDoc.doc_type}.pdf`)}
+                onDownload={() => handleDownload(previewDoc.id, `${previewDoc.document_type}.pdf`)}
               />
             </div>
             <div style={{ padding: "0.75rem 1.25rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end" }}>

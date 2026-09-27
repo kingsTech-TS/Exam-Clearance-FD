@@ -86,10 +86,10 @@ export default function StaffDashboardPage() {
       if (filterType === "PENDING" && !doc.status.startsWith("PENDING")) {
         return false;
       }
-      if (filterType === "CLEARANCE" && doc.doc_type !== "CLEARANCE_FORM") {
+      if (filterType === "CLEARANCE" && doc.document_type !== "CLEARANCE") {
         return false;
       }
-      if (filterType === "COURSE" && doc.doc_type !== "COURSE_FORM") {
+      if (filterType === "COURSE" && doc.document_type !== "COURSE_FORM") {
         return false;
       }
 
@@ -97,7 +97,7 @@ export default function StaffDashboardPage() {
       if (search.trim()) {
         const term = search.toLowerCase().trim();
         const matchesName = doc.student_name?.toLowerCase().includes(term);
-        const matchesMatric = doc.matric_number?.toLowerCase().includes(term) || doc.registration_number?.toLowerCase().includes(term);
+        const matchesMatric = doc.student_matric_or_reg?.toLowerCase().includes(term);
         const matchesDept = doc.department?.toLowerCase().includes(term) || doc.faculty?.toLowerCase().includes(term);
         return matchesName || matchesMatric || matchesDept;
       }
@@ -449,11 +449,11 @@ export default function StaffDashboardPage() {
                             width: "1.875rem",
                             height: "1.875rem",
                             borderRadius: "6px",
-                            background: doc.doc_type === "CLEARANCE_FORM" ? "var(--primary-light)" : "var(--status-processing-bg)",
+                            background: doc.document_type === "CLEARANCE" ? "var(--primary-light)" : "var(--status-processing-bg)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            color: doc.doc_type === "CLEARANCE_FORM" ? "var(--primary)" : "var(--status-processing-text)",
+                            color: doc.document_type === "CLEARANCE" ? "var(--primary)" : "var(--status-processing-text)",
                             flexShrink: 0,
                           }}
                         >
@@ -461,10 +461,10 @@ export default function StaffDashboardPage() {
                         </div>
                         <div>
                           <div style={{ fontWeight: 600, fontSize: "0.8125rem", color: "var(--foreground)" }}>
-                            {doc.doc_type === "CLEARANCE_FORM" ? "Clearance Form" : "Course Form"}
+                            {doc.document_type === "CLEARANCE" ? "Clearance Form" : "Course Form"}
                           </div>
                           <div style={{ fontSize: "0.71875rem", color: "var(--foreground-muted)" }}>
-                            {(doc as unknown as { original_filename?: string }).original_filename || `${doc.doc_type?.toLowerCase() || "doc"}.pdf`}
+                            {(doc as unknown as { original_filename?: string }).original_filename || `${doc.document_type?.toLowerCase() || "doc"}.pdf`}
                           </div>
                         </div>
                       </div>
@@ -483,7 +483,7 @@ export default function StaffDashboardPage() {
                           fontWeight: 600,
                         }}
                       >
-                        {doc.matric_number || doc.registration_number || "—"}
+                        {doc.student_matric_or_reg || "—"}
                       </code>
                     </td>
                     <td data-label="Department & Faculty" style={{ fontSize: "0.8125rem" }}>

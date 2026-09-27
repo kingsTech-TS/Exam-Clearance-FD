@@ -155,7 +155,7 @@ export default function AdminDashboardPage() {
                           {doc.student_name}
                         </td>
                         <td data-label="Type" style={{ fontSize: "0.75rem" }}>
-                          {doc.doc_type === "CLEARANCE_FORM" ? "Clearance" : "Course Form"}
+                          {doc.document_type === "CLEARANCE" ? "Clearance" : "Course Form"}
                         </td>
                         <td data-label="Status">
                           <StatusBadge status={doc.status} />

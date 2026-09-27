@@ -17,7 +17,7 @@ export const DOCUMENT_STATUS_BADGE: Record<DocumentStatus, string> = {
 };
 
 export const DOC_TYPE_LABELS = {
-  CLEARANCE_FORM: "Clearance Form",
+  CLEARANCE: "Clearance Form",
   COURSE_FORM: "Course Form",
 } as const;
 

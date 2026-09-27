@@ -22,12 +22,17 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/auth/authStore";
-import { staffApi } from "@/lib/api/staff";
+import { staffApi, BULK_MAX_ITEMS } from "@/lib/api/staff";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { PageSkeleton } from "@/components/shared/LoadingSkeleton";
+import { BulkSignDialog } from "@/components/documents/BulkSignDialog";
 import { LEVEL_LIST } from "@/lib/constants/faculties";
 import type { CourseRegistration, CourseRegistrationStatus, SemesterType } from "@/types/course";
+import type { BulkActionResponse } from "@/types/api";
+
+// Mirrors the per-row "Review & Sign" condition below
+const isPendingReg = (r: CourseRegistration) => r.status === "PENDING_HOD" || r.status === "SUBMITTED";
 
 type FilterTab = "ALL" | "PENDING_HOD" | "COMPLETED" | "REJECTED";
 
@@ -48,6 +53,12 @@ export default function StaffCourseRegistrationsPage() {
   const [rejectReason, setRejectReason] = useState("");
   const [isRejectMode, setIsRejectMode] = useState(false);
   const [notification, setNotification] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  // Bulk approval states
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkResult, setBulkResult] = useState<BulkActionResponse | null>(null);
+  const [bulkError, setBulkError] = useState<string | null>(null);
 
   // Fetch course registrations
   const { data: registrations, isLoading } = useQuery({
@@ -118,6 +129,48 @@ export default function StaffCourseRegistrationsPage() {
     },
   });
 
+  const bulkApproveMutation = useMutation({
+    mutationFn: ({ ids, date }: { ids: string[]; date: string }) =>
+      staffApi.bulkApproveCourseRegistrations(ids, date),
+    onSuccess: (res) => {
+      setBulkResult(res.data.data);
+      setSelectedIds(new Set());
+      queryClient.invalidateQueries({ queryKey: ["hod-course-registrations"] });
+      queryClient.invalidateQueries({ queryKey: ["staff-dashboard"] });
+    },
+    onError: (err: unknown) => {
+      const e = err as { response?: { data?: { message?: string } } };
+      setBulkError(e?.response?.data?.message || "Bulk approval failed. Please try again.");
+    },
+  });
+
+  // Only act on selections that are still visible and pending (filters or refetches may hide them)
+  const visiblePending = filteredRegs.filter(isPendingReg);
+  const selectedPending = visiblePending.filter((r) => selectedIds.has(r.id));
+  const allVisibleSelected = visiblePending.length > 0 && selectedPending.length === visiblePending.length;
+
+  const toggleOne = (id: string) =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const toggleAllVisible = () =>
+    setSelectedIds(allVisibleSelected ? new Set() : new Set(visiblePending.map((r) => r.id)));
+
+  const openBulk = () => {
+    setBulkResult(null);
+    setBulkError(null);
+    setBulkOpen(true);
+  };
+
+  const regLabel = (id: string) => {
+    const r = registrations?.find((x) => x.id === id);
+    return r ? `${r.student_name || "Student"} (${r.student_matric_or_reg || "—"})` : id;
+  };
+
   const handleOpenReview = (reg: CourseRegistration) => {
     setReviewingReg(reg);
     setIsRejectMode(false);
@@ -179,6 +232,32 @@ export default function StaffCourseRegistrationsPage() {
         >
           {notification.type === "success" ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
           <span>{notification.text}</span>
+        </div>
+      )}
+
+      {/* Bulk Approve Bar */}
+      {selectedPending.length > 0 && (
+        <div className="card" style={{ padding: "0.75rem 1rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+          <span style={{ fontSize: "0.8125rem", fontWeight: 600 }}>
+            {selectedPending.length} registration{selectedPending.length === 1 ? "" : "s"} selected
+            {selectedPending.length > BULK_MAX_ITEMS && (
+              <span style={{ color: "var(--destructive)", fontWeight: 500 }}> &mdash; maximum {BULK_MAX_ITEMS} per batch</span>
+            )}
+          </span>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSelectedIds(new Set())}>
+              Clear
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={openBulk}
+              disabled={selectedPending.length > BULK_MAX_ITEMS}
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
+            >
+              <PenTool size={13} /> Approve &amp; Sign Selected
+            </button>
+          </div>
         </div>
       )}
 
@@ -308,6 +387,15 @@ export default function StaffCourseRegistrationsPage() {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem", textAlign: "left" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border)", background: "var(--surface-sunken)" }}>
+                  <th style={{ padding: "0.875rem 0 0.875rem 1rem", width: "36px" }}>
+                    <input
+                      type="checkbox"
+                      aria-label="Select all registrations awaiting endorsement"
+                      checked={allVisibleSelected}
+                      disabled={visiblePending.length === 0}
+                      onChange={toggleAllVisible}
+                    />
+                  </th>
                   <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Student</th>
                   <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Matric / Reg No</th>
                   <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Level</th>
@@ -326,6 +414,16 @@ export default function StaffCourseRegistrationsPage() {
                       transition: "background 0.15s ease",
                     }}
                   >
+                    <td style={{ padding: "0.875rem 0 0.875rem 1rem" }}>
+                      {isPendingReg(reg) && (
+                        <input
+                          type="checkbox"
+                          aria-label={`Select ${reg.student_name || "student"}`}
+                          checked={selectedIds.has(reg.id)}
+                          onChange={() => toggleOne(reg.id)}
+                        />
+                      )}
+                    </td>
                     <td style={{ padding: "0.875rem 1rem" }}>
                       <div style={{ fontWeight: 600, color: "var(--foreground)" }}>
                         {reg.student_name || "Student"}
@@ -618,6 +716,25 @@ export default function StaffCourseRegistrationsPage() {
           </div>
         </div>
       )}
+
+      <BulkSignDialog
+        isOpen={bulkOpen}
+        onClose={() => setBulkOpen(false)}
+        title="Bulk Approve Course Registrations"
+        description="Your HOD signature will be applied to every selected registration and an official Course Form PDF generated for each. Any registration that fails validation is skipped; the rest are still approved."
+        count={selectedPending.length}
+        itemNoun="registration"
+        doneVerb="approved"
+        confirmLabel="Approve & Sign All Selected"
+        isSubmitting={bulkApproveMutation.isPending}
+        result={bulkResult}
+        error={bulkError}
+        labelFor={regLabel}
+        onConfirm={(date) => {
+          setBulkError(null);
+          bulkApproveMutation.mutate({ ids: selectedPending.map((r) => r.id), date });
+        }}
+      />
     </div>
   );
 }
