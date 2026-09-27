@@ -222,6 +222,7 @@ export default function AdminDocumentsPage() {
             <div style={{ flex: 1, overflow: "hidden" }}>
               <PdfViewer
                 url={previewUrl || previewDoc.file_url}
+                height="100%"
                 title={`${previewDoc.student_name} — ${previewDoc.document_type === "CLEARANCE" ? "Clearance" : "Course"} Form`}
                 canDownload={previewDoc.status === "COMPLETED"}
                 onDownload={() => handleDownload(previewDoc.id, `${previewDoc.document_type}.pdf`)}

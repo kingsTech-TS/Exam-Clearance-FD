@@ -44,6 +44,7 @@ export const APPROVAL_STATUS_BADGE = {
 export const COURSE_REGISTRATION_STATUS_LABELS: Record<string, string> = {
   DRAFT: "Draft",
   PENDING_HOD: "Awaiting HOD Approval",
+  PROCESSING: "Generating Form",
   APPROVED: "Approved",
   REJECTED: "Needs Revision",
   COMPLETED: "Approved & Signed",
@@ -54,6 +55,7 @@ export const COURSE_REGISTRATION_STATUS_LABELS: Record<string, string> = {
 export const COURSE_REGISTRATION_STATUS_BADGE: Record<string, string> = {
   DRAFT: "badge-info",
   PENDING_HOD: "badge-pending",
+  PROCESSING: "badge-info",
   APPROVED: "badge-success",
   REJECTED: "badge-error",
   COMPLETED: "badge-success",

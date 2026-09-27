@@ -2,7 +2,7 @@ export type SemesterType = "FIRST" | "SECOND";
 export type CourseStatusType = "ACTIVE" | "INACTIVE";
 // Backend statuses: DRAFT → PENDING_HOD → (REJECTED | COMPLETED)
 // COMPLETED means HOD has approved and the Course Form PDF has been generated
-export type CourseRegistrationStatus = "DRAFT" | "PENDING_HOD" | "REJECTED" | "APPROVED" | "COMPLETED" | "SUBMITTED";
+export type CourseRegistrationStatus = "DRAFT" | "PENDING_HOD" | "PROCESSING" | "REJECTED" | "APPROVED" | "COMPLETED" | "SUBMITTED";
 
 export interface Course {
   id: string;

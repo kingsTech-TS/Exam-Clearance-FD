@@ -27,11 +27,13 @@ import { StatCard } from "@/components/shared/StatCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { PageSkeleton } from "@/components/shared/LoadingSkeleton";
+import { HodRegistrationQueue, isAwaitingHod } from "@/components/staff/HodRegistrationQueue";
 import type { StaffSubRole } from "@/types/user";
 
 export default function StaffDashboardPage() {
   const { user } = useAuthStore();
   const subRole: StaffSubRole = user?.sub_role || "BURSAR";
+  const isHod = user?.sub_role === "HOD";
 
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"ALL" | "PENDING" | "CLEARANCE" | "COURSE">("ALL");
@@ -52,22 +54,31 @@ export default function StaffDashboardPage() {
     },
   });
 
+  // HODs have no assigned documents (the backend returns an empty list); their queue is course registrations
   const { data: documents, isLoading: docsLoading } = useQuery({
     queryKey: ["staff-assigned-documents"],
     queryFn: async () => {
       const res = await staffApi.getDocuments();
       return res.data.data;
     },
+    enabled: !!user && !isHod,
   });
 
-  const { data: pendingHodRegistrations } = useQuery({
-    queryKey: ["staff-hod-pending-registrations"],
+  // Key sits under "hod-course-registrations" so approve/reject elsewhere invalidates it too
+  const { data: hodRegistrations, isLoading: regsLoading } = useQuery({
+    queryKey: ["hod-course-registrations", "dashboard"],
     queryFn: async () => {
-      const res = await staffApi.getCourseRegistrations({ status: "SUBMITTED" });
-      return res.data.data;
+      const res = await staffApi.getCourseRegistrations();
+      // Drafts have not been submitted by the student yet, so they are not HOD action items
+      return res.data.data.filter((r) => r.status !== "DRAFT");
     },
-    enabled: subRole === "HOD",
+    enabled: isHod,
   });
+
+  const hodRegs = hodRegistrations || [];
+  const hodPendingCount = hodRegs.filter(isAwaitingHod).length;
+  const hodApprovedCount = hodRegs.filter((r) => r.status === "COMPLETED" || r.status === "APPROVED" || r.status === "PROCESSING").length;
+  const hodRejectedCount = hodRegs.filter((r) => r.status === "REJECTED").length;
 
   const isProfileComplete = Boolean(
     staffProfile?.profile_complete ||
@@ -108,7 +119,7 @@ export default function StaffDashboardPage() {
 
   const recentDocs = filteredDocs.slice(0, 10);
 
-  if (dashLoading || docsLoading) return <PageSkeleton />;
+  if (dashLoading || docsLoading || regsLoading) return <PageSkeleton />;
 
   const getSubRoleMeta = () => {
     switch (subRole) {
@@ -196,7 +207,7 @@ export default function StaffDashboardPage() {
                   className="btn btn-primary"
                   style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", textDecoration: "none" }}
                 >
-                  <GraduationCap size={15} /> Registrations ({pendingHodRegistrations?.length ?? 0})
+                  <GraduationCap size={15} /> Registrations ({hodPendingCount})
                 </Link>
                 <Link
                   href="/staff/courses"
@@ -207,13 +218,15 @@ export default function StaffDashboardPage() {
                 </Link>
               </>
             )}
-            <Link
-              href="/staff/documents"
-              className="btn btn-secondary"
-              style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", textDecoration: "none" }}
-            >
-              <FileText size={15} /> Documents ({allDocs.length})
-            </Link>
+            {!isHod && (
+              <Link
+                href="/staff/documents"
+                className="btn btn-secondary"
+                style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem", textDecoration: "none" }}
+              >
+                <FileText size={15} /> Documents ({allDocs.length})
+              </Link>
+            )}
             <Link
               href="/staff/profile"
               className="btn btn-secondary"
@@ -269,16 +282,43 @@ export default function StaffDashboardPage() {
           gap: "1rem",
         }}
       >
-        {subRole === "HOD" && (
-          <StatCard
-            label="Course Registrations"
-            value={pendingHodRegistrations?.length ?? 0}
-            subtitle="Awaiting HOD Endorsement"
-            icon={GraduationCap}
-            variant={(pendingHodRegistrations?.length ?? 0) > 0 ? "warning" : "default"}
-            href="/staff/course-registrations"
-          />
-        )}
+        {isHod ? (
+          <>
+            <StatCard
+              label="Awaiting Endorsement"
+              value={hodPendingCount}
+              subtitle="Submitted course registrations"
+              icon={Clock}
+              variant={hodPendingCount > 0 ? "warning" : "default"}
+              href="/staff/course-registrations"
+            />
+            <StatCard
+              label="Approved & Signed"
+              value={hodApprovedCount}
+              subtitle="Course forms generated"
+              icon={CheckCircle2}
+              variant="success"
+              href="/staff/course-registrations"
+            />
+            <StatCard
+              label="Returned / Rejected"
+              value={hodRejectedCount}
+              subtitle="Sent back for revision"
+              icon={XCircle}
+              variant={hodRejectedCount > 0 ? "danger" : "default"}
+              href="/staff/course-registrations"
+            />
+            <StatCard
+              label="Total Submissions"
+              value={hodRegs.length}
+              subtitle="Registrations in your department"
+              icon={GraduationCap}
+              variant="default"
+              href="/staff/course-registrations"
+            />
+          </>
+        ) : (
+          <>
         <StatCard
           label="Pending Review"
           value={pendingCount}
@@ -311,9 +351,14 @@ export default function StaffDashboardPage() {
           variant="default"
           href="/staff/documents"
         />
+          </>
+        )}
       </div>
 
       {/* Main Review Queue Card */}
+      {isHod ? (
+        <HodRegistrationQueue registrations={hodRegs} />
+      ) : (
       <div className="card">
         {/* Card Header */}
         <div
@@ -526,6 +571,7 @@ export default function StaffDashboardPage() {
           </div>
         )}
       </div>
+      )}
 
       {/* Desk Guidelines & Security Info Grid */}
       <div
@@ -563,7 +609,7 @@ export default function StaffDashboardPage() {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <Link
-              href="/staff/documents"
+              href={isHod ? "/staff/course-registrations" : "/staff/documents"}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -577,7 +623,7 @@ export default function StaffDashboardPage() {
                 fontWeight: 500,
               }}
             >
-              <span>Search &amp; Filter Full Registry</span>
+              <span>{isHod ? "Search & Filter All Registrations" : "Search & Filter Full Registry"}</span>
               <ArrowRight size={13} color="var(--foreground-muted)" />
             </Link>
             <Link

@@ -29,6 +29,8 @@ export default function StaffDocumentReviewPage() {
   const router = useRouter();
   const id = params?.id as string;
   const { user } = useAuthStore();
+  // HODs reach documents (course forms) from their registrations, not the documents registry
+  const backHref = user?.sub_role === "HOD" ? "/staff/course-registrations" : "/staff/documents";
 
   const [isSignOpen, setIsSignOpen] = useState(false);
   const [isRejectOpen, setIsRejectOpen] = useState(false);
@@ -57,7 +59,7 @@ export default function StaffDocumentReviewPage() {
     return (
       <div style={{ padding: "2rem", textAlign: "center" }}>
         <h3>Document not found</h3>
-        <button type="button" className="btn btn-secondary btn-sm" onClick={() => router.push("/staff/documents")} style={{ marginTop: "1rem" }}>
+        <button type="button" className="btn btn-secondary btn-sm" onClick={() => router.push(backHref)} style={{ marginTop: "1rem" }}>
           Back to Documents
         </button>
       </div>
@@ -81,7 +83,7 @@ export default function StaffDocumentReviewPage() {
           <button
             type="button"
             className="btn btn-ghost btn-sm"
-            onClick={() => router.push("/staff/documents")}
+            onClick={() => router.push(backHref)}
             style={{ padding: "0.375rem", flexShrink: 0 }}
           >
             <ArrowLeft size={18} />

@@ -1,22 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
-import { ZoomIn, ZoomOut, Maximize2, Download, RefreshCw, FileText } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { ZoomIn, ZoomOut, Maximize2, Minimize2, Download, FileText } from "lucide-react";
 
 interface PdfViewerProps {
   url?: string;
   title?: string;
   onDownload?: () => void;
   canDownload?: boolean;
+  // Viewer height when not fullscreen; pass "100%" when the parent has a fixed height (e.g. a modal)
+  height?: string;
 }
 
-export function PdfViewer({ url, title = "Document Preview", onDownload, canDownload = false }: PdfViewerProps) {
+// Max page width at 100% zoom, so the PDF doesn't stretch edge-to-edge on wide screens
+const BASE_PAGE_WIDTH = 900;
+const DEFAULT_HEIGHT = "calc(100vh - 11rem)";
+
+export function PdfViewer({ url, title = "Document Preview", onDownload, canDownload = false, height = DEFAULT_HEIGHT }: PdfViewerProps) {
   const [zoom, setZoom] = useState(100);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleZoomIn = () => setZoom((prev) => Math.min(prev + 25, 200));
   const handleZoomOut = () => setZoom((prev) => Math.max(prev - 25, 50));
   const handleResetZoom = () => setZoom(100);
+
+  // Allow Esc to leave fullscreen
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsFullscreen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isFullscreen]);
 
   if (!url) {
     return (
@@ -27,7 +43,7 @@ export function PdfViewer({ url, title = "Document Preview", onDownload, canDown
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          height: "100%",
+          height,
           minHeight: "450px",
           padding: "2rem",
           background: "var(--background)",
@@ -41,16 +57,25 @@ export function PdfViewer({ url, title = "Document Preview", onDownload, canDown
     );
   }
 
+  const toolbarButton: React.CSSProperties = {
+    color: "#f8fafc",
+    padding: "0.25rem 0.5rem",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+
   return (
     <div
-      className={`card ${isFullscreen ? "fixed inset-0 z-50 rounded-none" : ""}`}
+      className="card"
       style={{
         display: "flex",
         flexDirection: "column",
-        height: isFullscreen ? "100vh" : "100%",
-        minHeight: "520px",
         overflow: "hidden",
-        background: "#334155",
+        background: "#475569",
+        ...(isFullscreen
+          ? { position: "fixed", inset: 0, zIndex: 1000, height: "100vh", width: "100vw", borderRadius: 0, border: "none" }
+          : { height, minHeight: "520px", width: "100%" }),
       }}
     >
       {/* Top Toolbar */}
@@ -59,47 +84,39 @@ export function PdfViewer({ url, title = "Document Preview", onDownload, canDown
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0.625rem 1rem",
+          gap: "0.75rem",
+          padding: "0.5rem 0.75rem",
           background: "#1e293b",
           color: "#f8fafc",
           borderBottom: "1px solid #0f172a",
           flexShrink: 0,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <FileText size={16} color="#94a3b8" />
-          <span style={{ fontSize: "0.8125rem", fontWeight: 500, maxWidth: "250px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", minWidth: 0, flex: 1 }}>
+          <FileText size={16} color="#94a3b8" style={{ flexShrink: 0 }} />
+          <span
+            title={title}
+            style={{ fontSize: "0.8125rem", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+          >
             {title}
           </span>
         </div>
 
         {/* Controls */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm"
-            onClick={handleZoomOut}
-            style={{ color: "#f8fafc", padding: "0.25rem 0.5rem" }}
-            title="Zoom Out"
-          >
+        <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexShrink: 0 }}>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={handleZoomOut} disabled={zoom <= 50} style={toolbarButton} title="Zoom Out">
             <ZoomOut size={15} />
           </button>
           <button
             type="button"
             className="btn btn-ghost btn-sm"
             onClick={handleResetZoom}
-            style={{ color: "#f8fafc", padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
+            style={{ ...toolbarButton, fontSize: "0.75rem", minWidth: "3.25rem", fontVariantNumeric: "tabular-nums" }}
             title="Reset Zoom"
           >
             {zoom}%
           </button>
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm"
-            onClick={handleZoomIn}
-            style={{ color: "#f8fafc", padding: "0.25rem 0.5rem" }}
-            title="Zoom In"
-          >
+          <button type="button" className="btn btn-ghost btn-sm" onClick={handleZoomIn} disabled={zoom >= 200} style={toolbarButton} title="Zoom In">
             <ZoomIn size={15} />
           </button>
 
@@ -110,7 +127,7 @@ export function PdfViewer({ url, title = "Document Preview", onDownload, canDown
               type="button"
               className="btn btn-primary btn-sm"
               onClick={onDownload}
-              style={{ fontSize: "0.75rem", padding: "0.25rem 0.625rem" }}
+              style={{ fontSize: "0.75rem", padding: "0.25rem 0.625rem", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}
             >
               <Download size={13} /> Download
             </button>
@@ -120,41 +137,32 @@ export function PdfViewer({ url, title = "Document Preview", onDownload, canDown
             type="button"
             className="btn btn-ghost btn-sm"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            style={{ color: "#f8fafc", padding: "0.25rem 0.5rem" }}
-            title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+            style={toolbarButton}
+            title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen"}
           >
-            <Maximize2 size={15} />
+            {isFullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
           </button>
         </div>
       </div>
 
-      {/* PDF Frame Container */}
-      <div
-        style={{
-          flex: 1,
-          overflow: "auto",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-start",
-          padding: "1rem",
-          background: "#475569",
-        }}
-      >
+      {/* PDF Frame Container — block layout with auto margins so a zoomed page scrolls on both sides */}
+      <div style={{ flex: 1, minHeight: 0, overflow: "auto", padding: "0.75rem" }}>
         <div
           style={{
-            width: `${zoom}%`,
-            maxWidth: isFullscreen ? "100%" : "1000px",
+            // 100% = fit to the viewer (capped at BASE_PAGE_WIDTH); zoom scales from there
+            width: `calc(min(100%, ${BASE_PAGE_WIDTH}px) * ${zoom / 100})`,
             height: "100%",
-            minHeight: "600px",
-            transition: "width 0.15s ease-out",
+            margin: "0 auto",
             background: "#ffffff",
             borderRadius: "4px",
             boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
+            overflow: "hidden",
+            transition: "width 0.15s ease-out",
           }}
         >
           <iframe
-            src={`${url}#toolbar=0&navpanes=0`}
-            style={{ width: "100%", height: "100%", minHeight: "600px", border: "none", borderRadius: "4px" }}
+            src={`${url}#toolbar=0&navpanes=0&view=FitH`}
+            style={{ display: "block", width: "100%", height: "100%", border: "none" }}
             title={title}
           />
         </div>
