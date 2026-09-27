@@ -25,7 +25,13 @@ import { staffApi } from "@/lib/api/staff";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { PageSkeleton } from "@/components/shared/LoadingSkeleton";
 import { LEVEL_LIST } from "@/lib/constants/faculties";
-import type { Course, CourseCreateRequest, CourseUpdateRequest, CourseBulkResponse, SemesterType } from "@/types/course";
+import type {
+  Course,
+  CourseCreateRequest,
+  CourseUpdateRequest,
+  CourseBulkResponse,
+  SemesterType,
+} from "@/types/course";
 
 const SESSIONS = ["2025/2026", "2026/2027", "2024/2025"];
 
@@ -44,7 +50,10 @@ export default function StaffCoursesPage() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isBulkOpen, setIsBulkOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-  const [notification, setNotification] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [notification, setNotification] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   // Form states for Add / Edit
   const [formCode, setFormCode] = useState("");
@@ -60,7 +69,13 @@ export default function StaffCoursesPage() {
 
   // Fetch courses
   const { data: courses, isLoading } = useQuery({
-    queryKey: ["hod-courses", selectedSession, selectedSemester, selectedLevel, selectedStatus],
+    queryKey: [
+      "hod-courses",
+      selectedSession,
+      selectedSemester,
+      selectedLevel,
+      selectedStatus,
+    ],
     queryFn: async () => {
       const res = await staffApi.getCourses({
         session: selectedSession || undefined,
@@ -81,7 +96,7 @@ export default function StaffCoursesPage() {
     return courses.filter(
       (c) =>
         c.course_code.toLowerCase().includes(q) ||
-        c.course_title.toLowerCase().includes(q)
+        c.course_title.toLowerCase().includes(q),
     );
   }, [courses, search]);
 
@@ -92,7 +107,10 @@ export default function StaffCoursesPage() {
       queryClient.invalidateQueries({ queryKey: ["hod-courses"] });
       setIsAddOpen(false);
       resetForm();
-      setNotification({ type: "success", text: "Course created successfully." });
+      setNotification({
+        type: "success",
+        text: "Course created successfully.",
+      });
       setTimeout(() => setNotification(null), 4000);
     },
     onError: (err: any) => {
@@ -108,7 +126,10 @@ export default function StaffCoursesPage() {
       queryClient.invalidateQueries({ queryKey: ["hod-courses"] });
       setEditingCourse(null);
       resetForm();
-      setNotification({ type: "success", text: "Course updated successfully." });
+      setNotification({
+        type: "success",
+        text: "Course updated successfully.",
+      });
       setTimeout(() => setNotification(null), 4000);
     },
     onError: (err: any) => {
@@ -125,7 +146,8 @@ export default function StaffCoursesPage() {
       setTimeout(() => setNotification(null), 4000);
     },
     onError: (err: any) => {
-      const msg = err.response?.data?.message || "Failed to change course status.";
+      const msg =
+        err.response?.data?.message || "Failed to change course status.";
       setNotification({ type: "error", text: msg });
     },
   });
@@ -142,7 +164,9 @@ export default function StaffCoursesPage() {
       setTimeout(() => setNotification(null), 5000);
     },
     onError: (err: any) => {
-      const msg = err.response?.data?.message || "Bulk upload failed. Verify your CSV format.";
+      const msg =
+        err.response?.data?.message ||
+        "Bulk upload failed. Verify your CSV format.";
       setNotification({ type: "error", text: msg });
     },
   });
@@ -219,7 +243,7 @@ export default function StaffCoursesPage() {
       <EmptyState
         icon={BookOpen}
         title="Departmental Access Restricted"
-        description="Course management is restricted to Heads of Department (HOD). As a Bursary or Auditor officer, please manage student clearance documents from your Clearance Review desk."
+        description="Course management is restricted to Heads of Department (HOD). As a Bursary or Auditor officer, please manage Digital Exam Clearance documents from your Clearance Review desk."
       />
     );
   }
@@ -241,12 +265,23 @@ export default function StaffCoursesPage() {
             <h1 style={{ fontSize: "1.375rem", fontWeight: 700, margin: 0 }}>
               Departmental Course Management
             </h1>
-            <span className="badge badge-info" style={{ fontSize: "0.6875rem" }}>
+            <span
+              className="badge badge-info"
+              style={{ fontSize: "0.6875rem" }}
+            >
               HOD Portal
             </span>
           </div>
-          <p style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)", marginTop: "0.25rem" }}>
-            Department: <strong>{user?.department || "Department"}</strong> &bull; Configure and manage curriculum courses available for student registration.
+          <p
+            style={{
+              fontSize: "0.8125rem",
+              color: "var(--foreground-muted)",
+              marginTop: "0.25rem",
+            }}
+          >
+            Department: <strong>{user?.department || "Department"}</strong>{" "}
+            &bull; Configure and manage curriculum courses available for student
+            registration.
           </p>
         </div>
 
@@ -259,7 +294,11 @@ export default function StaffCoursesPage() {
               setIsBulkOpen(true);
             }}
             className="btn btn-outline"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.375rem",
+            }}
           >
             <FileSpreadsheet size={15} /> Bulk CSV Import
           </button>
@@ -267,7 +306,11 @@ export default function StaffCoursesPage() {
             type="button"
             onClick={handleOpenAdd}
             className="btn btn-primary"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.375rem",
+            }}
           >
             <Plus size={16} /> Add Course
           </button>
@@ -287,7 +330,11 @@ export default function StaffCoursesPage() {
             borderRadius: "8px",
           }}
         >
-          {notification.type === "success" ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+          {notification.type === "success" ? (
+            <CheckCircle2 size={18} />
+          ) : (
+            <AlertCircle size={18} />
+          )}
           <span>{notification.text}</span>
         </div>
       )}
@@ -334,7 +381,9 @@ export default function StaffCoursesPage() {
         >
           <option value="">All Levels</option>
           {LEVEL_LIST.map((lvl) => (
-            <option key={lvl} value={lvl}>{lvl} Level</option>
+            <option key={lvl} value={lvl}>
+              {lvl} Level
+            </option>
           ))}
         </select>
 
@@ -358,7 +407,9 @@ export default function StaffCoursesPage() {
           style={{ width: "130px" }}
         >
           {SESSIONS.map((s) => (
-            <option key={s} value={s}>{s}</option>
+            <option key={s} value={s}>
+              {s}
+            </option>
           ))}
         </select>
 
@@ -387,17 +438,51 @@ export default function StaffCoursesPage() {
       ) : (
         <div className="card" style={{ overflow: "hidden" }}>
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem", textAlign: "left" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                fontSize: "0.875rem",
+                textAlign: "left",
+              }}
+            >
               <thead>
-                <tr style={{ borderBottom: "1px solid var(--border)", background: "var(--surface-sunken)" }}>
-                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Code</th>
-                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Course Title</th>
-                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Units</th>
-                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Level</th>
-                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Semester</th>
-                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Session</th>
-                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>Status</th>
-                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600, textAlign: "right" }}>Actions</th>
+                <tr
+                  style={{
+                    borderBottom: "1px solid var(--border)",
+                    background: "var(--surface-sunken)",
+                  }}
+                >
+                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>
+                    Code
+                  </th>
+                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>
+                    Course Title
+                  </th>
+                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>
+                    Units
+                  </th>
+                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>
+                    Level
+                  </th>
+                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>
+                    Semester
+                  </th>
+                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>
+                    Session
+                  </th>
+                  <th style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>
+                    Status
+                  </th>
+                  <th
+                    style={{
+                      padding: "0.875rem 1rem",
+                      fontWeight: 600,
+                      textAlign: "right",
+                    }}
+                  >
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -409,10 +494,21 @@ export default function StaffCoursesPage() {
                       transition: "background 0.15s ease",
                     }}
                   >
-                    <td style={{ padding: "0.875rem 1rem", fontWeight: 700, color: "var(--foreground)" }}>
+                    <td
+                      style={{
+                        padding: "0.875rem 1rem",
+                        fontWeight: 700,
+                        color: "var(--foreground)",
+                      }}
+                    >
                       {c.course_code}
                     </td>
-                    <td style={{ padding: "0.875rem 1rem", color: "var(--foreground)" }}>
+                    <td
+                      style={{
+                        padding: "0.875rem 1rem",
+                        color: "var(--foreground)",
+                      }}
+                    >
                       {c.course_title}
                     </td>
                     <td style={{ padding: "0.875rem 1rem", fontWeight: 600 }}>
@@ -426,7 +522,13 @@ export default function StaffCoursesPage() {
                         {c.semester === "FIRST" ? "1st Sem" : "2nd Sem"}
                       </span>
                     </td>
-                    <td style={{ padding: "0.875rem 1rem", color: "var(--foreground-muted)", fontSize: "0.8125rem" }}>
+                    <td
+                      style={{
+                        padding: "0.875rem 1rem",
+                        color: "var(--foreground-muted)",
+                        fontSize: "0.8125rem",
+                      }}
+                    >
                       {c.session}
                     </td>
                     <td style={{ padding: "0.875rem 1rem" }}>
@@ -436,7 +538,9 @@ export default function StaffCoursesPage() {
                         {c.status}
                       </span>
                     </td>
-                    <td style={{ padding: "0.875rem 1rem", textAlign: "right" }}>
+                    <td
+                      style={{ padding: "0.875rem 1rem", textAlign: "right" }}
+                    >
                       <div style={{ display: "inline-flex", gap: "0.375rem" }}>
                         <Link
                           href={`/staff/courses/${c.id}`}
@@ -457,9 +561,16 @@ export default function StaffCoursesPage() {
                           type="button"
                           onClick={() => deactivateCourseMutation.mutate(c.id)}
                           className="btn btn-ghost btn-xs"
-                          title={c.status === "ACTIVE" ? "Deactivate Course" : "Activate Course"}
+                          title={
+                            c.status === "ACTIVE"
+                              ? "Deactivate Course"
+                              : "Activate Course"
+                          }
                           style={{
-                            color: c.status === "ACTIVE" ? "var(--destructive, #ef4444)" : "var(--success, #10b981)",
+                            color:
+                              c.status === "ACTIVE"
+                                ? "var(--destructive, #ef4444)"
+                                : "var(--success, #10b981)",
                           }}
                         >
                           <Power size={14} />
@@ -488,7 +599,9 @@ export default function StaffCoursesPage() {
               }}
             >
               <h3 style={{ margin: 0, fontSize: "1.125rem", fontWeight: 700 }}>
-                {editingCourse ? `Edit Course: ${editingCourse.course_code}` : "Add New Course"}
+                {editingCourse
+                  ? `Edit Course: ${editingCourse.course_code}`
+                  : "Add New Course"}
               </h3>
               <button
                 type="button"
@@ -502,10 +615,31 @@ export default function StaffCoursesPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveCourse} style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <form
+              onSubmit={handleSaveCourse}
+              style={{
+                padding: "1.5rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "1rem",
+                }}
+              >
                 <div>
-                  <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.375rem" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      marginBottom: "0.375rem",
+                    }}
+                  >
                     Course Code *
                   </label>
                   <input
@@ -520,7 +654,14 @@ export default function StaffCoursesPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.375rem" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      marginBottom: "0.375rem",
+                    }}
+                  >
                     Credit Units (1-6) *
                   </label>
                   <input
@@ -529,7 +670,9 @@ export default function StaffCoursesPage() {
                     max={6}
                     required
                     value={formUnits}
-                    onChange={(e) => setFormUnits(parseInt(e.target.value) || 1)}
+                    onChange={(e) =>
+                      setFormUnits(parseInt(e.target.value) || 1)
+                    }
                     className="input"
                     style={{ width: "100%" }}
                   />
@@ -537,7 +680,14 @@ export default function StaffCoursesPage() {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.375rem" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    marginBottom: "0.375rem",
+                  }}
+                >
                   Course Title *
                 </label>
                 <input
@@ -551,9 +701,22 @@ export default function StaffCoursesPage() {
                 />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                  gap: "0.75rem",
+                }}
+              >
                 <div>
-                  <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.375rem" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      marginBottom: "0.375rem",
+                    }}
+                  >
                     Level
                   </label>
                   <select
@@ -563,18 +726,29 @@ export default function StaffCoursesPage() {
                     style={{ width: "100%" }}
                   >
                     {LEVEL_LIST.map((lvl) => (
-                      <option key={lvl} value={lvl}>{lvl}L</option>
+                      <option key={lvl} value={lvl}>
+                        {lvl}L
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.375rem" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      marginBottom: "0.375rem",
+                    }}
+                  >
                     Semester
                   </label>
                   <select
                     value={formSemester}
-                    onChange={(e) => setFormSemester(e.target.value as SemesterType)}
+                    onChange={(e) =>
+                      setFormSemester(e.target.value as SemesterType)
+                    }
                     className="input"
                     style={{ width: "100%" }}
                   >
@@ -584,7 +758,14 @@ export default function StaffCoursesPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.375rem" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      marginBottom: "0.375rem",
+                    }}
+                  >
                     Session
                   </label>
                   <select
@@ -594,13 +775,22 @@ export default function StaffCoursesPage() {
                     style={{ width: "100%" }}
                   >
                     {SESSIONS.map((s) => (
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "0.75rem",
+                  marginTop: "1rem",
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => {
@@ -613,7 +803,10 @@ export default function StaffCoursesPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={createCourseMutation.isPending || updateCourseMutation.isPending}
+                  disabled={
+                    createCourseMutation.isPending ||
+                    updateCourseMutation.isPending
+                  }
                   className="btn btn-primary"
                 >
                   {editingCourse
@@ -621,8 +814,8 @@ export default function StaffCoursesPage() {
                       ? "Saving..."
                       : "Save Changes"
                     : createCourseMutation.isPending
-                    ? "Creating..."
-                    : "Create Course"}
+                      ? "Creating..."
+                      : "Create Course"}
                 </button>
               </div>
             </form>
@@ -655,7 +848,14 @@ export default function StaffCoursesPage() {
               </button>
             </div>
 
-            <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div
+              style={{
+                padding: "1.5rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.25rem",
+              }}
+            >
               {/* Template Download & Format Guide */}
               <div
                 style={{
@@ -665,19 +865,43 @@ export default function StaffCoursesPage() {
                   fontSize: "0.8125rem",
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                  <span style={{ fontWeight: 600 }}>CSV Format Requirements</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  <span style={{ fontWeight: 600 }}>
+                    CSV Format Requirements
+                  </span>
                   <button
                     type="button"
                     onClick={handleDownloadSampleCSV}
                     className="btn btn-ghost btn-xs"
-                    style={{ fontSize: "0.75rem", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}
+                    style={{
+                      fontSize: "0.75rem",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.25rem",
+                    }}
                   >
                     <Download size={13} /> Download Sample CSV
                   </button>
                 </div>
-                <p style={{ color: "var(--foreground-muted)", margin: "0 0 0.5rem", lineHeight: 1.5 }}>
-                  File must contain headers: <code>course_code,course_title,units,level,semester,session</code>.
+                <p
+                  style={{
+                    color: "var(--foreground-muted)",
+                    margin: "0 0 0.5rem",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  File must contain headers:{" "}
+                  <code>
+                    course_code,course_title,units,level,semester,session
+                  </code>
+                  .
                 </p>
                 <code
                   style={{
@@ -700,9 +924,13 @@ export default function StaffCoursesPage() {
                   padding: "2rem 1rem",
                   textAlign: "center",
                   cursor: "pointer",
-                  backgroundColor: bulkFile ? "rgba(99, 102, 241, 0.05)" : "transparent",
+                  backgroundColor: bulkFile
+                    ? "rgba(99, 102, 241, 0.05)"
+                    : "transparent",
                 }}
-                onClick={() => document.getElementById("bulk-file-input")?.click()}
+                onClick={() =>
+                  document.getElementById("bulk-file-input")?.click()
+                }
               >
                 <input
                   id="bulk-file-input"
@@ -714,12 +942,24 @@ export default function StaffCoursesPage() {
                     if (file) setBulkFile(file);
                   }}
                 />
-                <Upload size={32} color="var(--primary)" style={{ margin: "0 auto 0.75rem" }} />
+                <Upload
+                  size={32}
+                  color="var(--primary)"
+                  style={{ margin: "0 auto 0.75rem" }}
+                />
                 <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>
                   {bulkFile ? bulkFile.name : "Click to select CSV file"}
                 </div>
-                <div style={{ fontSize: "0.75rem", color: "var(--foreground-muted)", marginTop: "0.25rem" }}>
-                  {bulkFile ? `${(bulkFile.size / 1024).toFixed(1)} KB` : "Supports UTF-8 encoded .csv files"}
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--foreground-muted)",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  {bulkFile
+                    ? `${(bulkFile.size / 1024).toFixed(1)} KB`
+                    : "Supports UTF-8 encoded .csv files"}
                 </div>
               </div>
 
@@ -729,19 +969,30 @@ export default function StaffCoursesPage() {
                   style={{
                     padding: "1rem",
                     borderRadius: "8px",
-                    background: bulkResult.failed_rows > 0 ? "rgba(239, 68, 68, 0.05)" : "rgba(16, 185, 129, 0.05)",
+                    background:
+                      bulkResult.failed_rows > 0
+                        ? "rgba(239, 68, 68, 0.05)"
+                        : "rgba(16, 185, 129, 0.05)",
                     border: `1px solid ${bulkResult.failed_rows > 0 ? "var(--destructive)" : "var(--success)"}`,
                     fontSize: "0.8125rem",
                   }}
                 >
                   <div style={{ fontWeight: 600, marginBottom: "0.25rem" }}>
-                    Import Report: {bulkResult.success_count} added, {bulkResult.failed_rows} failed.
+                    Import Report: {bulkResult.success_count} added,{" "}
+                    {bulkResult.failed_rows} failed.
                   </div>
                   {bulkResult.errors && bulkResult.errors.length > 0 && (
-                    <ul style={{ margin: "0.5rem 0 0", paddingLeft: "1.25rem", color: "#ef4444" }}>
+                    <ul
+                      style={{
+                        margin: "0.5rem 0 0",
+                        paddingLeft: "1.25rem",
+                        color: "#ef4444",
+                      }}
+                    >
                       {bulkResult.errors.map((err, i) => (
                         <li key={i}>
-                          Row {err.row}: {err.field ? `[${err.field}] ` : ""}{err.message}
+                          Row {err.row}: {err.field ? `[${err.field}] ` : ""}
+                          {err.message}
                         </li>
                       ))}
                     </ul>
@@ -750,7 +1001,13 @@ export default function StaffCoursesPage() {
               )}
 
               {/* Modal Actions */}
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "0.75rem",
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => setIsBulkOpen(false)}
@@ -761,10 +1018,14 @@ export default function StaffCoursesPage() {
                 <button
                   type="button"
                   disabled={!bulkFile || bulkUploadMutation.isPending}
-                  onClick={() => bulkFile && bulkUploadMutation.mutate(bulkFile)}
+                  onClick={() =>
+                    bulkFile && bulkUploadMutation.mutate(bulkFile)
+                  }
                   className="btn btn-primary"
                 >
-                  {bulkUploadMutation.isPending ? "Importing Courses..." : "Upload and Import"}
+                  {bulkUploadMutation.isPending
+                    ? "Importing Courses..."
+                    : "Upload and Import"}
                 </button>
               </div>
             </div>

@@ -4,7 +4,7 @@
 
 ### Frontend Application (Next.js 16 • TypeScript • Tailwind CSS)
 
-An institutional digital portal engineered for **Ekiti State University (EKSU)** to streamline, digitize, and automate student clearance validation and course registration form signing with multi-role cryptographic endorsement.
+An institutional digital portal engineered for **Ekiti State University (EKSU)** to streamline, digitize, and automate Digital Exam Clearance validation and course registration form signing with multi-role cryptographic endorsement.
 
 ---
 

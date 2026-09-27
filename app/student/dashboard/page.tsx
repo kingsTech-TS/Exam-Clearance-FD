@@ -50,31 +50,38 @@ export default function StudentDashboardPage() {
     return <PageSkeleton />;
   }
 
-  const clearanceForm = dashboardData?.clearance_form || docsData?.find((d) => d.document_type === "CLEARANCE");
+  const clearanceForm =
+    dashboardData?.clearance_form ||
+    docsData?.find((d) => d.document_type === "CLEARANCE");
   // course_form_status now comes from course_registrations (DRAFT/PENDING_HOD/COMPLETED/REJECTED)
-  const courseFormStatus: string | null = dashboardData?.course_form_status ?? null;
-  const courseFormDocId: string | null = dashboardData?.course_form_document_id ?? null;
-  
+  const courseFormStatus: string | null =
+    dashboardData?.course_form_status ?? null;
+  const courseFormDocId: string | null =
+    dashboardData?.course_form_document_id ?? null;
+
   const isProfileComplete = Boolean(
     dashboardData?.profile_complete ||
     dashboardData?.profile_completed ||
     dashboardData?.profile?.profile_complete ||
     dashboardData?.profile?.profile_completed ||
-    (dashboardData?.profile?.passport_uploaded && dashboardData?.profile?.signature_uploaded) ||
-    user?.profile_complete
+    (dashboardData?.profile?.passport_uploaded &&
+      dashboardData?.profile?.signature_uploaded) ||
+    user?.profile_complete,
   );
 
   const isBursarSigned = Boolean(
     clearanceForm?.bursar_signed_at ||
     clearanceForm?.status === "PENDING_AUDITOR" ||
-    clearanceForm?.status === "COMPLETED"
+    clearanceForm?.status === "COMPLETED",
   );
   const isAuditorSigned = Boolean(
-    clearanceForm?.auditor_signed_at ||
-    clearanceForm?.status === "COMPLETED"
+    clearanceForm?.auditor_signed_at || clearanceForm?.status === "COMPLETED",
   );
-  const isBursarRejected = clearanceForm?.status === "REJECTED" && !clearanceForm?.bursar_signed_at;
-  const isAuditorRejected = clearanceForm?.status === "REJECTED" && Boolean(clearanceForm?.bursar_signed_at);
+  const isBursarRejected =
+    clearanceForm?.status === "REJECTED" && !clearanceForm?.bursar_signed_at;
+  const isAuditorRejected =
+    clearanceForm?.status === "REJECTED" &&
+    Boolean(clearanceForm?.bursar_signed_at);
 
   const handleDownload = async (docId: string, filename: string) => {
     try {
@@ -127,10 +134,29 @@ export default function StudentDashboardPage() {
       >
         <div>
           <h1 style={{ fontSize: "1.375rem", fontWeight: 700, margin: 0 }}>
-            Welcome back, {user?.full_name || dashboardData?.profile?.full_name || "Student"}
+            Welcome back,{" "}
+            {user?.full_name || dashboardData?.profile?.full_name || "Student"}
           </h1>
-          <p style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)", marginTop: "0.25rem" }}>
-            Matric: {user?.matric_number || user?.registration_number || dashboardData?.profile?.matric_number || dashboardData?.profile?.registration_number || "—"} &bull; {user?.faculty || dashboardData?.profile?.faculty || "Faculty"} &bull; {user?.department || dashboardData?.profile?.department || "Department"} ({user?.level || dashboardData?.profile?.level || "100"}L)
+          <p
+            style={{
+              fontSize: "0.8125rem",
+              color: "var(--foreground-muted)",
+              marginTop: "0.25rem",
+            }}
+          >
+            Matric:{" "}
+            {user?.matric_number ||
+              user?.registration_number ||
+              dashboardData?.profile?.matric_number ||
+              dashboardData?.profile?.registration_number ||
+              "—"}{" "}
+            &bull;{" "}
+            {user?.faculty || dashboardData?.profile?.faculty || "Faculty"}{" "}
+            &bull;{" "}
+            {user?.department ||
+              dashboardData?.profile?.department ||
+              "Department"}{" "}
+            ({user?.level || dashboardData?.profile?.level || "100"}L)
           </p>
         </div>
 
@@ -160,19 +186,37 @@ export default function StudentDashboardPage() {
             gap: "1rem",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+          >
             <AlertCircle size={20} color="var(--status-pending-text)" />
             <div>
-              <div style={{ fontWeight: 600, color: "var(--status-pending-text)" }}>Profile Setup Required</div>
-              <div style={{ fontSize: "0.8125rem", color: "var(--status-pending-text)", marginTop: "0.125rem" }}>
-                Please upload your passport photograph and digital signature to activate document submissions.
+              <div
+                style={{ fontWeight: 600, color: "var(--status-pending-text)" }}
+              >
+                Profile Setup Required
+              </div>
+              <div
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--status-pending-text)",
+                  marginTop: "0.125rem",
+                }}
+              >
+                Please upload your passport photograph and digital signature to
+                activate document submissions.
               </div>
             </div>
           </div>
           <Link
             href="/student/profile"
             className="btn btn-primary btn-sm"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", textDecoration: "none" }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.25rem",
+              textDecoration: "none",
+            }}
           >
             Complete Setup <ArrowRight size={13} />
           </Link>
@@ -180,11 +224,30 @@ export default function StudentDashboardPage() {
       )}
 
       {/* Primary Forms Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }} className="dashboard-cards-grid">
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "1.25rem",
+        }}
+        className="dashboard-cards-grid"
+      >
         {/* Clearance Form Card */}
-        <div className="card" style={{ display: "flex", flexDirection: "column" }}>
-          <div className="card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+        <div
+          className="card"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+          <div
+            className="card-header"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}
+            >
               <div
                 style={{
                   width: "2rem",
@@ -200,57 +263,170 @@ export default function StudentDashboardPage() {
                 <Shield size={16} />
               </div>
               <div>
-                <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, margin: 0 }}>Student Clearance Form</h3>
-                <span style={{ fontSize: "0.75rem", color: "var(--foreground-muted)" }}>Faculty Sequential Signing (Bursar &rarr; Auditor)</span>
+                <h3
+                  style={{ fontSize: "0.9375rem", fontWeight: 600, margin: 0 }}
+                >
+                  Digital Exam Clearance Form
+                </h3>
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--foreground-muted)",
+                  }}
+                >
+                  Faculty Sequential Signing (Bursar &rarr; Auditor)
+                </span>
               </div>
             </div>
             {clearanceForm && <StatusBadge status={clearanceForm.status} />}
           </div>
 
-          <div className="card-body" style={{ flex: 1, display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div
+            className="card-body"
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+            }}
+          >
             {clearanceForm ? (
               <>
                 {/* Workflow steps */}
-                <div style={{ background: "var(--background)", padding: "0.875rem", borderRadius: "6px", border: "1px solid var(--border)" }}>
-                  <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--foreground-muted)", marginBottom: "0.625rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <div
+                  style={{
+                    background: "var(--background)",
+                    padding: "0.875rem",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      color: "var(--foreground-muted)",
+                      marginBottom: "0.625rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
                     Signing Pipeline
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8125rem" }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        fontSize: "0.8125rem",
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.375rem",
+                        }}
+                      >
                         {isBursarSigned ? (
-                          <CheckCircle2 size={14} color="var(--status-success-text)" />
+                          <CheckCircle2
+                            size={14}
+                            color="var(--status-success-text)"
+                          />
                         ) : (
                           <Clock size={14} color="var(--foreground-muted)" />
                         )}
                         1. Faculty Bursar Review
                       </span>
-                      <StatusBadge status={isBursarSigned ? "COMPLETED" : isBursarRejected ? "REJECTED" : "PENDING_BURSAR"} />
+                      <StatusBadge
+                        status={
+                          isBursarSigned
+                            ? "COMPLETED"
+                            : isBursarRejected
+                              ? "REJECTED"
+                              : "PENDING_BURSAR"
+                        }
+                      />
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8125rem" }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        fontSize: "0.8125rem",
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.375rem",
+                        }}
+                      >
                         {isAuditorSigned ? (
-                          <CheckCircle2 size={14} color="var(--status-success-text)" />
+                          <CheckCircle2
+                            size={14}
+                            color="var(--status-success-text)"
+                          />
                         ) : (
                           <Clock size={14} color="var(--foreground-muted)" />
                         )}
                         2. University Auditor Clearance
                       </span>
-                      <StatusBadge status={isAuditorSigned ? "COMPLETED" : isAuditorRejected ? "REJECTED" : isBursarSigned ? "PENDING_AUDITOR" : "PENDING_BURSAR"} />
+                      <StatusBadge
+                        status={
+                          isAuditorSigned
+                            ? "COMPLETED"
+                            : isAuditorRejected
+                              ? "REJECTED"
+                              : isBursarSigned
+                                ? "PENDING_AUDITOR"
+                                : "PENDING_BURSAR"
+                        }
+                      />
                     </div>
                   </div>
                 </div>
 
-                <div style={{ display: "flex", gap: "0.5rem", marginTop: "auto" }}>
-                  <Link href={`/student/documents/${clearanceForm.id}`} className="btn btn-outline btn-sm" style={{ flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.375rem", textDecoration: "none" }}>
+                <div
+                  style={{ display: "flex", gap: "0.5rem", marginTop: "auto" }}
+                >
+                  <Link
+                    href={`/student/documents/${clearanceForm.id}`}
+                    className="btn btn-outline btn-sm"
+                    style={{
+                      flex: 1,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.375rem",
+                      textDecoration: "none",
+                    }}
+                  >
                     <Eye size={14} /> View Details
                   </Link>
                   {clearanceForm.status === "COMPLETED" && (
                     <button
                       type="button"
                       className="btn btn-primary btn-sm"
-                      onClick={() => handleDownload(clearanceForm.id, "clearance-form-signed.pdf")}
-                      style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
+                      onClick={() =>
+                        handleDownload(
+                          clearanceForm.id,
+                          "clearance-form-signed.pdf",
+                        )
+                      }
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.375rem",
+                      }}
                     >
                       <Download size={14} /> Download Signed
                     </button>
@@ -258,12 +434,35 @@ export default function StudentDashboardPage() {
                 </div>
               </>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem 1rem", textAlign: "center", gap: "0.75rem" }}>
-                <FileText size={32} color="var(--foreground-muted)" style={{ opacity: 0.5 }} />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "2rem 1rem",
+                  textAlign: "center",
+                  gap: "0.75rem",
+                }}
+              >
+                <FileText
+                  size={32}
+                  color="var(--foreground-muted)"
+                  style={{ opacity: 0.5 }}
+                />
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>No Clearance Form Submitted</div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--foreground-muted)", marginTop: "0.125rem" }}>
-                    Upload your official university clearance form to begin the signing workflow.
+                  <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                    No Clearance Form Submitted
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "var(--foreground-muted)",
+                      marginTop: "0.125rem",
+                    }}
+                  >
+                    Upload your official university clearance form to begin the
+                    signing workflow.
                   </div>
                 </div>
                 <button
@@ -281,9 +480,21 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Course Form Card */}
-        <div className="card" style={{ display: "flex", flexDirection: "column" }}>
-          <div className="card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+        <div
+          className="card"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+          <div
+            className="card-header"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}
+            >
               <div
                 style={{
                   width: "2rem",
@@ -299,48 +510,135 @@ export default function StudentDashboardPage() {
                 <UserCheck size={16} />
               </div>
               <div>
-                <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, margin: 0 }}>Course Registration Form</h3>
-                <span style={{ fontSize: "0.75rem", color: "var(--foreground-muted)" }}>Departmental Signing (HOD Approval)</span>
+                <h3
+                  style={{ fontSize: "0.9375rem", fontWeight: 600, margin: 0 }}
+                >
+                  Course Registration Form
+                </h3>
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--foreground-muted)",
+                  }}
+                >
+                  Departmental Signing (HOD Approval)
+                </span>
               </div>
             </div>
-            {courseFormStatus && <StatusBadge status={courseFormStatus} type="registration" />}
+            {courseFormStatus && (
+              <StatusBadge status={courseFormStatus} type="registration" />
+            )}
           </div>
 
-          <div className="card-body" style={{ flex: 1, display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div
+            className="card-body"
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+            }}
+          >
             {courseFormStatus ? (
               <>
-                <div style={{ background: "var(--surface-sunken)", padding: "0.875rem", borderRadius: "6px" }}>
-                  <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--foreground-muted)", marginBottom: "0.625rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <div
+                  style={{
+                    background: "var(--surface-sunken)",
+                    padding: "0.875rem",
+                    borderRadius: "6px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      color: "var(--foreground-muted)",
+                      marginBottom: "0.625rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
                     Department Approval
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8125rem" }}>
-                    <span style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      fontSize: "0.8125rem",
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.375rem",
+                      }}
+                    >
                       {courseFormStatus === "COMPLETED" ? (
-                        <CheckCircle2 size={14} color="var(--status-success-text)" />
+                        <CheckCircle2
+                          size={14}
+                          color="var(--status-success-text)"
+                        />
                       ) : (
                         <Clock size={14} color="var(--foreground-muted)" />
                       )}
-                      Head of Department ({user?.department || dashboardData?.profile?.department || "HOD"})
+                      Head of Department (
+                      {user?.department ||
+                        dashboardData?.profile?.department ||
+                        "HOD"}
+                      )
                     </span>
-                    <StatusBadge status={courseFormStatus} type="registration" />
+                    <StatusBadge
+                      status={courseFormStatus}
+                      type="registration"
+                    />
                   </div>
-                  {courseFormStatus === "REJECTED" && dashboardData?.course_rejection_reason && (
-                    <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "0.5rem", fontStyle: "italic" }}>
-                      &ldquo;{dashboardData.course_rejection_reason}&rdquo;
-                    </p>
-                  )}
+                  {courseFormStatus === "REJECTED" &&
+                    dashboardData?.course_rejection_reason && (
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "#ef4444",
+                          marginTop: "0.5rem",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        &ldquo;{dashboardData.course_rejection_reason}&rdquo;
+                      </p>
+                    )}
                 </div>
 
-                <div style={{ display: "flex", gap: "0.5rem", marginTop: "auto" }}>
-                  <Link href="/student/courses" className="btn btn-outline btn-sm" style={{ flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.375rem", textDecoration: "none" }}>
-                    <Eye size={14} /> {courseFormStatus === "COMPLETED" ? "View Registration" : "Manage Registration"}
+                <div
+                  style={{ display: "flex", gap: "0.5rem", marginTop: "auto" }}
+                >
+                  <Link
+                    href="/student/courses"
+                    className="btn btn-outline btn-sm"
+                    style={{
+                      flex: 1,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.375rem",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <Eye size={14} />{" "}
+                    {courseFormStatus === "COMPLETED"
+                      ? "View Registration"
+                      : "Manage Registration"}
                   </Link>
                   {courseFormStatus === "COMPLETED" && (
                     <button
                       type="button"
                       className="btn btn-primary btn-sm"
                       onClick={handleCourseFormDownload}
-                      style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.375rem",
+                      }}
                     >
                       <Download size={14} /> Download Signed
                     </button>
@@ -348,18 +646,47 @@ export default function StudentDashboardPage() {
                 </div>
               </>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem 1rem", textAlign: "center", gap: "0.75rem" }}>
-                <FileText size={32} color="var(--foreground-muted)" style={{ opacity: 0.5 }} />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "2rem 1rem",
+                  textAlign: "center",
+                  gap: "0.75rem",
+                }}
+              >
+                <FileText
+                  size={32}
+                  color="var(--foreground-muted)"
+                  style={{ opacity: 0.5 }}
+                />
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>No Course Registration Yet</div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--foreground-muted)", marginTop: "0.125rem" }}>
-                    Select and register your semester courses online for HOD endorsement.
+                  <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                    No Course Registration Yet
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "var(--foreground-muted)",
+                      marginTop: "0.125rem",
+                    }}
+                  >
+                    Select and register your semester courses online for HOD
+                    endorsement.
                   </div>
                 </div>
                 <Link
                   href="/student/courses"
                   className="btn btn-primary btn-sm"
-                  style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.375rem", marginTop: "0.25rem" }}
+                  style={{
+                    textDecoration: "none",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.375rem",
+                    marginTop: "0.25rem",
+                  }}
                 >
                   <BookOpen size={14} /> Register Courses
                 </Link>

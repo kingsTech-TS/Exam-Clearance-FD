@@ -2,7 +2,14 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Search, Eye, Filter, FileText, CheckCircle2, PenTool } from "lucide-react";
+import {
+  Search,
+  Eye,
+  Filter,
+  FileText,
+  CheckCircle2,
+  PenTool,
+} from "lucide-react";
 import Link from "next/link";
 import { staffApi, BULK_MAX_ITEMS } from "@/lib/api/staff";
 import { useAuthStore } from "@/lib/auth/authStore";
@@ -24,7 +31,9 @@ export default function StaffDocumentsPage() {
   const [search, setSearch] = useState("");
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
-  const signableStatus = user?.sub_role ? SIGNABLE_STATUS[user.sub_role] : undefined;
+  const signableStatus = user?.sub_role
+    ? SIGNABLE_STATUS[user.sub_role]
+    : undefined;
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkOpen, setBulkOpen] = useState(false);
@@ -55,11 +64,14 @@ export default function StaffDocumentsPage() {
     return matchesStatus && matchesSearch;
   });
 
-  const isSignable = (doc: DocumentResponse) => !!signableStatus && doc.status === signableStatus;
+  const isSignable = (doc: DocumentResponse) =>
+    !!signableStatus && doc.status === signableStatus;
   const visibleSignable = filteredDocs.filter(isSignable);
   // Only act on selections that are still visible and signable (filters or refetches may hide them)
   const selectedSignable = visibleSignable.filter((d) => selectedIds.has(d.id));
-  const allVisibleSelected = visibleSignable.length > 0 && selectedSignable.length === visibleSignable.length;
+  const allVisibleSelected =
+    visibleSignable.length > 0 &&
+    selectedSignable.length === visibleSignable.length;
 
   const toggleOne = (id: string) =>
     setSelectedIds((prev) => {
@@ -70,10 +82,15 @@ export default function StaffDocumentsPage() {
     });
 
   const toggleAllVisible = () =>
-    setSelectedIds(allVisibleSelected ? new Set() : new Set(visibleSignable.map((d) => d.id)));
+    setSelectedIds(
+      allVisibleSelected
+        ? new Set()
+        : new Set(visibleSignable.map((d) => d.id)),
+    );
 
   const bulkSignMutation = useMutation({
-    mutationFn: ({ ids, date }: { ids: string[]; date: string }) => staffApi.bulkSignDocuments(ids, date),
+    mutationFn: ({ ids, date }: { ids: string[]; date: string }) =>
+      staffApi.bulkSignDocuments(ids, date),
     onSuccess: (res) => {
       setBulkResult(res.data.data);
       setSelectedIds(new Set());
@@ -82,7 +99,9 @@ export default function StaffDocumentsPage() {
     },
     onError: (err: unknown) => {
       const e = err as { response?: { data?: { message?: string } } };
-      setBulkError(e?.response?.data?.message || "Bulk signing failed. Please try again.");
+      setBulkError(
+        e?.response?.data?.message || "Bulk signing failed. Please try again.",
+      );
     },
   });
 
@@ -101,23 +120,49 @@ export default function StaffDocumentsPage() {
     <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       {/* Header */}
       <div>
-        <h1 style={{ fontSize: "1.375rem", fontWeight: 700, margin: 0 }}>Assigned Documents Registry</h1>
-        <p style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)", marginTop: "0.25rem" }}>
-          Review, approve, or reject student clearance and course forms
+        <h1 style={{ fontSize: "1.375rem", fontWeight: 700, margin: 0 }}>
+          Assigned Documents Registry
+        </h1>
+        <p
+          style={{
+            fontSize: "0.8125rem",
+            color: "var(--foreground-muted)",
+            marginTop: "0.25rem",
+          }}
+        >
+          Review, approve, or reject Digital Exam Clearance and course forms
         </p>
       </div>
 
       {/* Bulk Sign Bar */}
       {signableStatus && selectedSignable.length > 0 && (
-        <div className="card" style={{ padding: "0.75rem 1rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+        <div
+          className="card"
+          style={{
+            padding: "0.75rem 1rem",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "0.75rem",
+            flexWrap: "wrap",
+          }}
+        >
           <span style={{ fontSize: "0.8125rem", fontWeight: 600 }}>
-            {selectedSignable.length} document{selectedSignable.length === 1 ? "" : "s"} selected
+            {selectedSignable.length} document
+            {selectedSignable.length === 1 ? "" : "s"} selected
             {selectedSignable.length > BULK_MAX_ITEMS && (
-              <span style={{ color: "var(--destructive)", fontWeight: 500 }}> &mdash; maximum {BULK_MAX_ITEMS} per batch</span>
+              <span style={{ color: "var(--destructive)", fontWeight: 500 }}>
+                {" "}
+                &mdash; maximum {BULK_MAX_ITEMS} per batch
+              </span>
             )}
           </span>
           <div style={{ display: "flex", gap: "0.5rem" }}>
-            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSelectedIds(new Set())}>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setSelectedIds(new Set())}
+            >
               Clear
             </button>
             <button
@@ -125,7 +170,11 @@ export default function StaffDocumentsPage() {
               className="btn btn-primary btn-sm"
               onClick={openBulk}
               disabled={selectedSignable.length > BULK_MAX_ITEMS}
-              style={{ display: "inline-flex", alignItems: "center", gap: "0.375rem" }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.375rem",
+              }}
             >
               <PenTool size={13} /> Sign Selected
             </button>
@@ -134,10 +183,28 @@ export default function StaffDocumentsPage() {
       )}
 
       {/* Filter and Search Bar */}
-      <div className="card" style={{ padding: "0.875rem", display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
+      <div
+        className="card"
+        style={{
+          padding: "0.875rem",
+          display: "flex",
+          gap: "0.75rem",
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
         {/* Search */}
         <div style={{ position: "relative", flex: 1, minWidth: "220px" }}>
-          <Search size={15} style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", color: "var(--foreground-muted)" }} />
+          <Search
+            size={15}
+            style={{
+              position: "absolute",
+              left: "0.75rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "var(--foreground-muted)",
+            }}
+          />
           <input
             type="text"
             className="form-input"
@@ -222,25 +289,49 @@ export default function StaffDocumentsPage() {
                     <td data-label="Student" style={{ fontWeight: 600 }}>
                       {doc.student_name}
                     </td>
-                    <td data-label="Matric / Reg No" style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)" }}>
+                    <td
+                      data-label="Matric / Reg No"
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--foreground-muted)",
+                      }}
+                    >
                       {doc.student_matric_or_reg || "—"}
                     </td>
-                    <td data-label="Faculty & Department" style={{ fontSize: "0.8125rem" }}>
+                    <td
+                      data-label="Faculty & Department"
+                      style={{ fontSize: "0.8125rem" }}
+                    >
                       {doc.faculty} &bull; {doc.department} ({doc.level}L)
                     </td>
                     <td data-label="Document Type">
                       <span style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
-                        {doc.document_type === "CLEARANCE" ? "Clearance Form" : "Course Form"}
+                        {doc.document_type === "CLEARANCE"
+                          ? "Clearance Form"
+                          : "Course Form"}
                       </span>
                     </td>
-                    <td data-label="Submitted" style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)" }}>
-                      {new Date(doc.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                    <td
+                      data-label="Submitted"
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--foreground-muted)",
+                      }}
+                    >
+                      {new Date(doc.created_at).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </td>
                     <td data-label="Status">
                       <StatusBadge status={doc.status} />
                     </td>
                     <td data-label="Action" style={{ textAlign: "right" }}>
-                      <Link href={`/staff/documents/${doc.id}`} className="btn btn-primary btn-sm">
+                      <Link
+                        href={`/staff/documents/${doc.id}`}
+                        className="btn btn-primary btn-sm"
+                      >
                         <Eye size={13} /> Review
                       </Link>
                     </td>
@@ -270,7 +361,10 @@ export default function StaffDocumentsPage() {
         labelFor={docLabel}
         onConfirm={(date) => {
           setBulkError(null);
-          bulkSignMutation.mutate({ ids: selectedSignable.map((d) => d.id), date });
+          bulkSignMutation.mutate({
+            ids: selectedSignable.map((d) => d.id),
+            date,
+          });
         }}
       />
     </div>

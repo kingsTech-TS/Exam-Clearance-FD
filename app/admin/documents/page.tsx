@@ -5,7 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Search, Eye, Download, FileText, Shield, Filter } from "lucide-react";
 import { adminApi } from "@/lib/api/admin";
 import { documentsApi } from "@/lib/api/documents";
-import { FACULTY_LIST, getDepartmentsForFaculty } from "@/lib/constants/faculties";
+import {
+  FACULTY_LIST,
+  getDepartmentsForFaculty,
+} from "@/lib/constants/faculties";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
@@ -70,17 +73,50 @@ export default function AdminDocumentsPage() {
     <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       {/* Header */}
       <div>
-        <h1 style={{ fontSize: "1.375rem", fontWeight: 700, margin: 0 }}>Institutional Document Registry</h1>
-        <p style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)", marginTop: "0.25rem" }}>
-          System-wide repository of all student clearance forms and course registrations
+        <h1 style={{ fontSize: "1.375rem", fontWeight: 700, margin: 0 }}>
+          Institutional Document Registry
+        </h1>
+        <p
+          style={{
+            fontSize: "0.8125rem",
+            color: "var(--foreground-muted)",
+            marginTop: "0.25rem",
+          }}
+        >
+          System-wide repository of all Digital Exam Clearance forms and course
+          registrations
         </p>
       </div>
 
       {/* Filter Bar */}
-      <div className="card" style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr", gap: "0.75rem" }} className="admin-docs-filter">
+      <div
+        className="card"
+        style={{
+          padding: "1rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.75rem",
+        }}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr",
+            gap: "0.75rem",
+          }}
+          className="admin-docs-filter"
+        >
           <div style={{ position: "relative" }}>
-            <Search size={15} style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", color: "var(--foreground-muted)" }} />
+            <Search
+              size={15}
+              style={{
+                position: "absolute",
+                left: "0.75rem",
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "var(--foreground-muted)",
+              }}
+            />
             <input
               type="text"
               className="form-input"
@@ -91,13 +127,23 @@ export default function AdminDocumentsPage() {
             />
           </div>
 
-          <select className="form-select" value={docType} onChange={(e) => setDocType(e.target.value)} style={{ height: "36px" }}>
+          <select
+            className="form-select"
+            value={docType}
+            onChange={(e) => setDocType(e.target.value)}
+            style={{ height: "36px" }}
+          >
             <option value="">All Document Types</option>
             <option value="CLEARANCE">Clearance Form</option>
             <option value="COURSE_FORM">Course Form</option>
           </select>
 
-          <select className="form-select" value={status} onChange={(e) => setStatus(e.target.value)} style={{ height: "36px" }}>
+          <select
+            className="form-select"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            style={{ height: "36px" }}
+          >
             <option value="">All Statuses</option>
             <option value="PENDING_BURSAR">Pending Bursar</option>
             <option value="PENDING_AUDITOR">Pending Auditor</option>
@@ -116,7 +162,11 @@ export default function AdminDocumentsPage() {
             style={{ height: "36px" }}
           >
             <option value="">All Faculties</option>
-            {FACULTY_LIST.map((f) => <option key={f} value={f}>{f}</option>)}
+            {FACULTY_LIST.map((f) => (
+              <option key={f} value={f}>
+                {f}
+              </option>
+            ))}
           </select>
 
           <select
@@ -127,7 +177,11 @@ export default function AdminDocumentsPage() {
             style={{ height: "36px" }}
           >
             <option value="">All Departments</option>
-            {departments.map((d) => <option key={d} value={d}>{d}</option>)}
+            {departments.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -163,25 +217,49 @@ export default function AdminDocumentsPage() {
                     <td data-label="Student" style={{ fontWeight: 600 }}>
                       {doc.student_name}
                     </td>
-                    <td data-label="Matric / Reg No" style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)" }}>
+                    <td
+                      data-label="Matric / Reg No"
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--foreground-muted)",
+                      }}
+                    >
                       {doc.student_matric_or_reg || "—"}
                     </td>
-                    <td data-label="Faculty & Department" style={{ fontSize: "0.8125rem" }}>
+                    <td
+                      data-label="Faculty & Department"
+                      style={{ fontSize: "0.8125rem" }}
+                    >
                       {doc.faculty} &bull; {doc.department}
                     </td>
                     <td data-label="Form Type">
                       <span style={{ fontSize: "0.8125rem", fontWeight: 500 }}>
-                        {doc.document_type === "CLEARANCE" ? "Clearance Form" : "Course Form"}
+                        {doc.document_type === "CLEARANCE"
+                          ? "Clearance Form"
+                          : "Course Form"}
                       </span>
                     </td>
                     <td data-label="Status">
                       <StatusBadge status={doc.status} />
                     </td>
-                    <td data-label="Current Reviewer" style={{ fontSize: "0.8125rem" }}>
-                      {doc.current_reviewer || (doc.status === "COMPLETED" ? "All Approved" : "—")}
+                    <td
+                      data-label="Current Reviewer"
+                      style={{ fontSize: "0.8125rem" }}
+                    >
+                      {doc.current_reviewer ||
+                        (doc.status === "COMPLETED" ? "All Approved" : "—")}
                     </td>
-                    <td data-label="Submitted" style={{ fontSize: "0.8125rem", color: "var(--foreground-muted)" }}>
-                      {new Date(doc.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                    <td
+                      data-label="Submitted"
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--foreground-muted)",
+                      }}
+                    >
+                      {new Date(doc.created_at).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                      })}
                     </td>
                     <td data-label="Actions" style={{ textAlign: "right" }}>
                       <div style={{ display: "inline-flex", gap: "0.375rem" }}>
@@ -196,7 +274,9 @@ export default function AdminDocumentsPage() {
                           <button
                             type="button"
                             className="btn btn-primary btn-sm"
-                            onClick={() => handleDownload(doc.id, `${doc.document_type}.pdf`)}
+                            onClick={() =>
+                              handleDownload(doc.id, `${doc.document_type}.pdf`)
+                            }
                           >
                             <Download size={13} /> PDF
                           </button>
@@ -216,7 +296,13 @@ export default function AdminDocumentsPage() {
         <div className="dialog-overlay" onClick={() => setPreviewDoc(null)}>
           <div
             className="dialog-box"
-            style={{ maxWidth: "900px", width: "95vw", height: "85vh", display: "flex", flexDirection: "column" }}
+            style={{
+              maxWidth: "900px",
+              width: "95vw",
+              height: "85vh",
+              display: "flex",
+              flexDirection: "column",
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ flex: 1, overflow: "hidden" }}>
@@ -225,11 +311,27 @@ export default function AdminDocumentsPage() {
                 height="100%"
                 title={`${previewDoc.student_name} — ${previewDoc.document_type === "CLEARANCE" ? "Clearance" : "Course"} Form`}
                 canDownload={previewDoc.status === "COMPLETED"}
-                onDownload={() => handleDownload(previewDoc.id, `${previewDoc.document_type}.pdf`)}
+                onDownload={() =>
+                  handleDownload(
+                    previewDoc.id,
+                    `${previewDoc.document_type}.pdf`,
+                  )
+                }
               />
             </div>
-            <div style={{ padding: "0.75rem 1.25rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end" }}>
-              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setPreviewDoc(null)}>
+            <div
+              style={{
+                padding: "0.75rem 1.25rem",
+                borderTop: "1px solid var(--border)",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => setPreviewDoc(null)}
+              >
                 Close Preview
               </button>
             </div>

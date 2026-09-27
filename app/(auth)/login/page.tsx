@@ -4,13 +4,25 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { Shield, GraduationCap, Users, Lock, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Shield,
+  GraduationCap,
+  Users,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import { authApi } from "@/lib/api/auth";
 import { useAuthStore } from "@/lib/auth/authStore";
 import {
-  studentLoginSchema, type StudentLoginForm,
-  staffLoginSchema, type StaffLoginForm,
-  adminLoginSchema, type AdminLoginForm,
+  studentLoginSchema,
+  type StudentLoginForm,
+  staffLoginSchema,
+  type StaffLoginForm,
+  adminLoginSchema,
+  type AdminLoginForm,
 } from "@/lib/validations/auth";
 
 type RoleTab = "student" | "staff" | "admin";
@@ -42,7 +54,14 @@ function LeftPanel() {
 
       <div style={{ position: "relative", zIndex: 1 }}>
         {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", marginBottom: "3rem" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.875rem",
+            marginBottom: "3rem",
+          }}
+        >
           <div
             style={{
               width: "3rem",
@@ -58,8 +77,12 @@ function LeftPanel() {
             <Shield size={22} color="white" />
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: "1rem", lineHeight: 1.2 }}>EKSU</div>
-            <div style={{ fontSize: "0.75rem", opacity: 0.75, marginTop: "1px" }}>
+            <div style={{ fontWeight: 700, fontSize: "1rem", lineHeight: 1.2 }}>
+              EKSU
+            </div>
+            <div
+              style={{ fontSize: "0.75rem", opacity: 0.75, marginTop: "1px" }}
+            >
               Digital Clearance System
             </div>
           </div>
@@ -76,18 +99,30 @@ function LeftPanel() {
         >
           Ekiti State University
           <br />
-          Student Clearance &amp;
+          Digital Exam Clearance &amp;
           <br />
           Course Form Portal
         </h1>
 
-        <p style={{ fontSize: "0.9rem", opacity: 0.8, lineHeight: 1.65, marginBottom: "2.5rem", maxWidth: "320px" }}>
-          A secure, digital platform for processing student clearance forms and course form approvals — faster, transparent, and paperless.
+        <p
+          style={{
+            fontSize: "0.9rem",
+            opacity: 0.8,
+            lineHeight: 1.65,
+            marginBottom: "2.5rem",
+            maxWidth: "320px",
+          }}
+        >
+          A secure, digital platform for processing Digital Exam Clearance forms
+          and course form approvals — faster, transparent, and paperless.
         </p>
 
         {/* Feature highlights */}
         {[
-          { label: "Students", desc: "Submit clearance & course forms digitally" },
+          {
+            label: "Students",
+            desc: "Submit clearance & course forms digitally",
+          },
           { label: "Staff", desc: "Review and sign assigned documents" },
           { label: "Admin", desc: "Manage the full clearance workflow" },
         ].map((f) => (
@@ -100,18 +135,33 @@ function LeftPanel() {
               marginBottom: "0.875rem",
             }}
           >
-            <CheckCircle2 size={15} style={{ marginTop: "2px", flexShrink: 0, opacity: 0.9 }} />
+            <CheckCircle2
+              size={15}
+              style={{ marginTop: "2px", flexShrink: 0, opacity: 0.9 }}
+            />
             <div>
-              <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>{f.label}</div>
-              <div style={{ fontSize: "0.8125rem", opacity: 0.7 }}>{f.desc}</div>
+              <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                {f.label}
+              </div>
+              <div style={{ fontSize: "0.8125rem", opacity: 0.7 }}>
+                {f.desc}
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div style={{ position: "relative", zIndex: 1, marginTop: "auto", paddingTop: "2.5rem" }}>
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          marginTop: "auto",
+          paddingTop: "2.5rem",
+        }}
+      >
         <p style={{ fontSize: "0.75rem", opacity: 0.5 }}>
-          © {new Date().getFullYear()} Ekiti State University. All rights reserved.
+          © {new Date().getFullYear()} Ekiti State University. All rights
+          reserved.
         </p>
       </div>
     </div>
@@ -125,26 +175,45 @@ function StudentLoginFormComp() {
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<StudentLoginForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<StudentLoginForm>({
     resolver: zodResolver(studentLoginSchema),
   });
 
   const onSubmit = async (data: StudentLoginForm) => {
     setError("");
     try {
-      const res = await authApi.studentLogin({ identifier: data.identifier, password: data.password });
+      const res = await authApi.studentLogin({
+        identifier: data.identifier,
+        password: data.password,
+      });
       const { access_token, refresh_token } = res.data.data;
       // Minimal user info — full profile fetched on dashboard
       setAuth(
-        { id: "", role: "STUDENT", full_name: "", matric_number: data.identifier, profile_complete: false },
+        {
+          id: "",
+          role: "STUDENT",
+          full_name: "",
+          matric_number: data.identifier,
+          profile_complete: false,
+        },
         access_token,
-        refresh_token
+        refresh_token,
       );
       router.push("/student/dashboard");
     } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string }; status?: number } };
-      if (e?.response?.status === 401) setError("Invalid credentials. Please check your ID and password.");
-      else if (e?.response?.status === 403) setError(e?.response?.data?.message ?? "Account suspended or inactive.");
+      const e = err as {
+        response?: { data?: { message?: string }; status?: number };
+      };
+      if (e?.response?.status === 401)
+        setError("Invalid credentials. Please check your ID and password.");
+      else if (e?.response?.status === 403)
+        setError(
+          e?.response?.data?.message ?? "Account suspended or inactive.",
+        );
       else setError("Something went wrong. Please try again.");
     }
   };
@@ -163,7 +232,9 @@ function StudentLoginFormComp() {
           autoComplete="username"
           {...register("identifier")}
         />
-        {errors.identifier && <p className="form-error">{errors.identifier.message}</p>}
+        {errors.identifier && (
+          <p className="form-error">{errors.identifier.message}</p>
+        )}
       </div>
 
       <div className="form-group">
@@ -198,7 +269,9 @@ function StudentLoginFormComp() {
             {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>
         </div>
-        {errors.password && <p className="form-error">{errors.password.message}</p>}
+        {errors.password && (
+          <p className="form-error">{errors.password.message}</p>
+        )}
       </div>
 
       {error && (
@@ -208,13 +281,28 @@ function StudentLoginFormComp() {
         </div>
       )}
 
-      <button type="submit" className="btn btn-primary" style={{ width: "100%" }} disabled={isSubmitting}>
+      <button
+        type="submit"
+        className="btn btn-primary"
+        style={{ width: "100%" }}
+        disabled={isSubmitting}
+      >
         {isSubmitting ? "Signing in…" : "Sign In"}
       </button>
 
-      <p style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "0.875rem", color: "var(--foreground-muted)" }}>
+      <p
+        style={{
+          textAlign: "center",
+          marginTop: "1.25rem",
+          fontSize: "0.875rem",
+          color: "var(--foreground-muted)",
+        }}
+      >
         Don&apos;t have an account?{" "}
-        <Link href="/student/register" style={{ color: "var(--primary)", fontWeight: 500 }}>
+        <Link
+          href="/student/register"
+          style={{ color: "var(--primary)", fontWeight: 500 }}
+        >
           Register here
         </Link>
       </p>
@@ -229,7 +317,11 @@ function StaffLoginFormComp() {
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<StaffLoginForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<StaffLoginForm>({
     resolver: zodResolver(staffLoginSchema),
   });
 
@@ -241,13 +333,20 @@ function StaffLoginFormComp() {
       setAuth(
         { id: "", role: "STAFF", full_name: "", staff_id: data.staff_id },
         access_token,
-        refresh_token
+        refresh_token,
       );
       router.push("/staff/dashboard");
     } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string }; status?: number } };
-      if (e?.response?.status === 401) setError("Invalid Staff ID or password.");
-      else if (e?.response?.status === 403) setError(e?.response?.data?.message ?? "Your account is not yet approved or has been suspended.");
+      const e = err as {
+        response?: { data?: { message?: string }; status?: number };
+      };
+      if (e?.response?.status === 401)
+        setError("Invalid Staff ID or password.");
+      else if (e?.response?.status === 403)
+        setError(
+          e?.response?.data?.message ??
+            "Your account is not yet approved or has been suspended.",
+        );
       else setError("Something went wrong. Please try again.");
     }
   };
@@ -255,13 +354,25 @@ function StaffLoginFormComp() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="form-group">
-        <label className="form-label" htmlFor="staff-id">Staff ID</label>
-        <input id="staff-id" type="text" className="form-input" placeholder="Enter your Staff ID" {...register("staff_id")} />
-        {errors.staff_id && <p className="form-error">{errors.staff_id.message}</p>}
+        <label className="form-label" htmlFor="staff-id">
+          Staff ID
+        </label>
+        <input
+          id="staff-id"
+          type="text"
+          className="form-input"
+          placeholder="Enter your Staff ID"
+          {...register("staff_id")}
+        />
+        {errors.staff_id && (
+          <p className="form-error">{errors.staff_id.message}</p>
+        )}
       </div>
 
       <div className="form-group">
-        <label className="form-label" htmlFor="staff-password">Password</label>
+        <label className="form-label" htmlFor="staff-password">
+          Password
+        </label>
         <div style={{ position: "relative" }}>
           <input
             id="staff-password"
@@ -274,12 +385,24 @@ function StaffLoginFormComp() {
           <button
             type="button"
             onClick={() => setShowPwd((v) => !v)}
-            style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--foreground-muted)", padding: 0 }}
+            style={{
+              position: "absolute",
+              right: "0.75rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "var(--foreground-muted)",
+              padding: 0,
+            }}
           >
             {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>
         </div>
-        {errors.password && <p className="form-error">{errors.password.message}</p>}
+        {errors.password && (
+          <p className="form-error">{errors.password.message}</p>
+        )}
       </div>
 
       {error && (
@@ -289,13 +412,28 @@ function StaffLoginFormComp() {
         </div>
       )}
 
-      <button type="submit" className="btn btn-primary" style={{ width: "100%" }} disabled={isSubmitting}>
+      <button
+        type="submit"
+        className="btn btn-primary"
+        style={{ width: "100%" }}
+        disabled={isSubmitting}
+      >
         {isSubmitting ? "Signing in…" : "Sign In"}
       </button>
 
-      <p style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "0.875rem", color: "var(--foreground-muted)" }}>
+      <p
+        style={{
+          textAlign: "center",
+          marginTop: "1.25rem",
+          fontSize: "0.875rem",
+          color: "var(--foreground-muted)",
+        }}
+      >
         New staff member?{" "}
-        <Link href="/staff/register" style={{ color: "var(--primary)", fontWeight: 500 }}>
+        <Link
+          href="/staff/register"
+          style={{ color: "var(--primary)", fontWeight: 500 }}
+        >
           Register here
         </Link>
       </p>
@@ -310,7 +448,11 @@ function AdminLoginFormComp() {
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<AdminLoginForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<AdminLoginForm>({
     resolver: zodResolver(adminLoginSchema),
   });
 
@@ -322,11 +464,13 @@ function AdminLoginFormComp() {
       setAuth(
         { id: "", role: "ADMIN", full_name: "", email: data.email },
         access_token,
-        refresh_token
+        refresh_token,
       );
       router.push("/admin/dashboard");
     } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string }; status?: number } };
+      const e = err as {
+        response?: { data?: { message?: string }; status?: number };
+      };
       if (e?.response?.status === 401) setError("Invalid email or password.");
       else setError("Something went wrong. Please try again.");
     }
@@ -335,13 +479,23 @@ function AdminLoginFormComp() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="form-group">
-        <label className="form-label" htmlFor="admin-email">Email Address</label>
-        <input id="admin-email" type="email" className="form-input" placeholder="admin@eksu.edu.ng" {...register("email")} />
+        <label className="form-label" htmlFor="admin-email">
+          Email Address
+        </label>
+        <input
+          id="admin-email"
+          type="email"
+          className="form-input"
+          placeholder="admin@eksu.edu.ng"
+          {...register("email")}
+        />
         {errors.email && <p className="form-error">{errors.email.message}</p>}
       </div>
 
       <div className="form-group">
-        <label className="form-label" htmlFor="admin-password">Password</label>
+        <label className="form-label" htmlFor="admin-password">
+          Password
+        </label>
         <div style={{ position: "relative" }}>
           <input
             id="admin-password"
@@ -354,12 +508,24 @@ function AdminLoginFormComp() {
           <button
             type="button"
             onClick={() => setShowPwd((v) => !v)}
-            style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--foreground-muted)", padding: 0 }}
+            style={{
+              position: "absolute",
+              right: "0.75rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "var(--foreground-muted)",
+              padding: 0,
+            }}
           >
             {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>
         </div>
-        {errors.password && <p className="form-error">{errors.password.message}</p>}
+        {errors.password && (
+          <p className="form-error">{errors.password.message}</p>
+        )}
       </div>
 
       {error && (
@@ -369,7 +535,12 @@ function AdminLoginFormComp() {
         </div>
       )}
 
-      <button type="submit" className="btn btn-primary" style={{ width: "100%" }} disabled={isSubmitting}>
+      <button
+        type="submit"
+        className="btn btn-primary"
+        style={{ width: "100%" }}
+        disabled={isSubmitting}
+      >
         {isSubmitting ? "Signing in…" : "Sign In"}
       </button>
     </form>
@@ -387,7 +558,14 @@ export default function LoginPage() {
   ];
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "100vh" }} className="auth-grid">
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        minHeight: "100vh",
+      }}
+      className="auth-grid"
+    >
       <LeftPanel />
 
       {/* Right — login form */}
@@ -402,8 +580,12 @@ export default function LoginPage() {
       >
         <div style={{ width: "100%", maxWidth: "400px" }}>
           <div style={{ marginBottom: "2rem" }}>
-            <h2 style={{ marginBottom: "0.375rem" }}>Sign in to your account</h2>
-            <p style={{ fontSize: "0.875rem", color: "var(--foreground-muted)" }}>
+            <h2 style={{ marginBottom: "0.375rem" }}>
+              Sign in to your account
+            </h2>
+            <p
+              style={{ fontSize: "0.875rem", color: "var(--foreground-muted)" }}
+            >
               Select your role below to continue
             </p>
           </div>
@@ -438,8 +620,12 @@ export default function LoginPage() {
                   border: "none",
                   cursor: "pointer",
                   transition: "all 0.15s",
-                  background: activeTab === key ? "var(--surface)" : "transparent",
-                  color: activeTab === key ? "var(--primary)" : "var(--foreground-muted)",
+                  background:
+                    activeTab === key ? "var(--surface)" : "transparent",
+                  color:
+                    activeTab === key
+                      ? "var(--primary)"
+                      : "var(--foreground-muted)",
                   boxShadow: activeTab === key ? "var(--shadow-xs)" : "none",
                 }}
               >
@@ -454,16 +640,45 @@ export default function LoginPage() {
           {activeTab === "admin" && <AdminLoginFormComp />}
 
           {/* Direct Portal Links */}
-          <div style={{ marginTop: "1.75rem", paddingTop: "1.25rem", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "center", gap: "0.875rem", fontSize: "0.75rem", color: "var(--foreground-muted)" }}>
-            <Link href="/student/login" style={{ color: "var(--foreground-muted)", textDecoration: "none" }}>
+          <div
+            style={{
+              marginTop: "1.75rem",
+              paddingTop: "1.25rem",
+              borderTop: "1px solid var(--border)",
+              display: "flex",
+              justifyContent: "center",
+              gap: "0.875rem",
+              fontSize: "0.75rem",
+              color: "var(--foreground-muted)",
+            }}
+          >
+            <Link
+              href="/student/login"
+              style={{
+                color: "var(--foreground-muted)",
+                textDecoration: "none",
+              }}
+            >
               Student Portal
             </Link>
             <span>•</span>
-            <Link href="/staff/login" style={{ color: "var(--foreground-muted)", textDecoration: "none" }}>
+            <Link
+              href="/staff/login"
+              style={{
+                color: "var(--foreground-muted)",
+                textDecoration: "none",
+              }}
+            >
               Staff Portal
             </Link>
             <span>•</span>
-            <Link href="/admin/login" style={{ color: "var(--foreground-muted)", textDecoration: "none" }}>
+            <Link
+              href="/admin/login"
+              style={{
+                color: "var(--foreground-muted)",
+                textDecoration: "none",
+              }}
+            >
               Admin Console
             </Link>
           </div>
