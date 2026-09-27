@@ -83,7 +83,7 @@ export default function StaffRegisterPage() {
             </div>
             <div>
               <span style={{ fontWeight: 700, fontSize: "0.9375rem", display: "block", lineHeight: 1.2 }}>
-                EKSU Clearance Portal
+                Digital Clearance Portal
               </span>
               <span style={{ fontSize: "0.75rem", color: "var(--foreground-muted)" }}>
                 Staff Member Self-Registration
