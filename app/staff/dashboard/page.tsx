@@ -23,6 +23,7 @@ import {
 import Link from "next/link";
 import { useAuthStore } from "@/lib/auth/authStore";
 import { staffApi } from "@/lib/api/staff";
+import { getMissingStaffAssets } from "@/lib/staffProfile";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -80,11 +81,8 @@ export default function StaffDashboardPage() {
   const hodApprovedCount = hodRegs.filter((r) => r.status === "COMPLETED" || r.status === "APPROVED" || r.status === "PROCESSING").length;
   const hodRejectedCount = hodRegs.filter((r) => r.status === "REJECTED").length;
 
-  const isProfileComplete = Boolean(
-    staffProfile?.profile_complete ||
-    staffProfile?.profile_completed ||
-    (staffProfile?.signature_uploaded && (staffProfile?.sub_role === "HOD" || staffProfile?.seal_uploaded))
-  );
+  const missingAssets = getMissingStaffAssets(staffProfile);
+  const isProfileComplete = missingAssets.length === 0;
 
   const pendingCount = dashboard?.pending_count ?? dashboard?.pending_documents_count ?? 0;
   const signedToday = dashboard?.signed_today ?? dashboard?.signed_documents_count ?? 0;
@@ -260,7 +258,7 @@ export default function StaffDashboardPage() {
                 Signing Credentials Required for Digital Endorsements
               </div>
               <div style={{ fontSize: "0.8125rem", color: "var(--status-pending-text)", opacity: 0.9, marginTop: "2px" }}>
-                Upload your transparent digital signature {subRole !== "HOD" ? "and official office seal" : ""} to enable one-click document stamping.
+                Upload your {missingAssets.join(", ")} to enable one-click document stamping.
               </div>
             </div>
           </div>

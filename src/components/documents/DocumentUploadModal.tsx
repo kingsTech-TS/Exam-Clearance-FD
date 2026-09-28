@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { Upload, X, AlertCircle, Info } from "lucide-react";
 import { studentsApi } from "@/lib/api/students";
 
@@ -21,6 +23,19 @@ export function DocumentUploadModal({
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // The backend stamps the student's signature onto the Clearance Form and rejects uploads without one
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: ["student-profile"],
+    queryFn: async () => {
+      const res = await studentsApi.getMe();
+      return res.data.data;
+    },
+    enabled: isOpen,
+  });
+  const hasSignature = Boolean(
+    profile?.signature_uploaded || profile?.signature_url || profile?.signature?.processed_url || profile?.signature?.url
+  );
 
   if (!isOpen) return null;
 
@@ -47,6 +62,10 @@ export function DocumentUploadModal({
     }
     if (!isClearancePeriodActive) {
       setError("Clearance submission is currently closed by the university administration.");
+      return;
+    }
+    if (!hasSignature) {
+      setError("Please upload your signature in your profile before submitting your Clearance Form.");
       return;
     }
 
@@ -89,6 +108,7 @@ export function DocumentUploadModal({
                 <li>Ensure this is your official, current session clearance form.</li>
                 <li>Verify your Matric/Reg number and student details are accurate.</li>
                 <li>The PDF must be clear, complete, and unencrypted.</li>
+                <li>Your profile signature and today&apos;s date will be stamped on the form automatically.</li>
               </ul>
             </div>
           </div>
@@ -98,6 +118,19 @@ export function DocumentUploadModal({
             <div className="alert alert-warning" style={{ marginBottom: "1rem", fontSize: "0.8125rem" }}>
               <AlertCircle size={15} style={{ flexShrink: 0 }} />
               <span>Clearance submission is currently closed. Contact admin for assistance.</span>
+            </div>
+          )}
+
+          {/* Missing signature notice */}
+          {!profileLoading && !hasSignature && (
+            <div className="alert alert-warning" style={{ marginBottom: "1rem", fontSize: "0.8125rem" }}>
+              <AlertCircle size={15} style={{ flexShrink: 0 }} />
+              <span>
+                You need to upload your signature before submitting.{" "}
+                <Link href="/student/profile" onClick={onClose} style={{ fontWeight: 600, color: "inherit" }}>
+                  Go to profile
+                </Link>
+              </span>
             </div>
           )}
 
@@ -157,7 +190,7 @@ export function DocumentUploadModal({
             type="button"
             className="btn btn-primary"
             onClick={handleUpload}
-            disabled={isUploading || !file || !isClearancePeriodActive}
+            disabled={isUploading || !file || !isClearancePeriodActive || profileLoading || !hasSignature}
           >
             {isUploading ? "Uploading & Processing..." : "Submit for Signing"}
           </button>

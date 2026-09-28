@@ -6,6 +6,7 @@ export interface MediaAsset {
   public_id: string;
   url: string;
   processed_url?: string;
+  background_removed?: boolean;
   uploaded_at?: string;
 }
 

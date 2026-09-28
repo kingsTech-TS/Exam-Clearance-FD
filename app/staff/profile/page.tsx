@@ -6,6 +6,7 @@ import { CheckCircle2, AlertCircle, Sparkles, Stamp, User } from "lucide-react";
 import { staffApi } from "@/lib/api/staff";
 import { FileUploadDropzone } from "@/components/profile/FileUploadDropzone";
 import { PageSkeleton } from "@/components/shared/LoadingSkeleton";
+import { getMissingStaffAssets } from "@/lib/staffProfile";
 import type { StaffSubRole } from "@/types/user";
 
 export default function StaffProfilePage() {
@@ -43,17 +44,13 @@ export default function StaffProfilePage() {
   const isHOD = subRole === "HOD";
   const passportUrl = profile?.passport_url || profile?.passport?.url;
   const signatureUrl = profile?.signature_url || profile?.signature?.processed_url || profile?.signature?.url;
-  const sealUrl = profile?.seal_url || profile?.seal?.url;
+  const sealUrl = profile?.seal_url || profile?.seal?.processed_url || profile?.seal?.url;
 
-  const hasPassport = Boolean(profile?.passport_uploaded || passportUrl);
-  const hasSignature = Boolean(profile?.signature_uploaded || signatureUrl);
-  const hasSeal = Boolean(profile?.seal_uploaded || sealUrl);
-
-  const isProfileComplete = Boolean(
-    profile?.profile_complete ||
-    profile?.profile_completed ||
-    (hasSignature && (isHOD || hasSeal))
-  );
+  const missingAssets = getMissingStaffAssets(profile);
+  const isProfileComplete = missingAssets.length === 0;
+  const hasPassport = !missingAssets.includes("passport");
+  const hasSignature = !missingAssets.includes("signature");
+  const hasSeal = !missingAssets.includes("seal");
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "900px" }}>
@@ -104,7 +101,7 @@ export default function StaffProfilePage() {
             >
               {isProfileComplete
                 ? "All required signing assets are verified and ready for digital document stamping."
-                : `Please upload your digital signature${!isHOD ? " and official seal" : ""} before signing student forms.`}
+                : `Please upload the following before signing student forms: ${missingAssets.join(", ")}.`}
             </p>
           </div>
         </div>
@@ -191,7 +188,7 @@ export default function StaffProfilePage() {
               }}
             >
               <Stamp size={14} color="var(--primary)" />
-              <span>The official seal is stamped alongside your signature on completed clearance forms.</span>
+              <span>Seals are also processed with transparent background removal and stamped alongside your signature on clearance forms.</span>
             </div>
           </div>
         )}
